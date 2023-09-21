@@ -14,14 +14,14 @@ public class Bounce : MonoBehaviour
     void FixedUpdate()
     {
         float dt = Time.fixedDeltaTime; // 0.02s, updating at 50fps!
-       // float acc = Physics.gravity.y;    // -9.81
-        float acc = -4.5f;    // -9.81
+        float acc = Physics.gravity.y;    // -9.81
+       // float acc = -4.5f;    // -9.81
 
         vel = vel + acc * dt;
 
         transform.position = new Vector3(
             transform.position.x,
-            transform.position.y + vel,
+            transform.position.y + vel * dt,
             transform.position.z
         );
 
@@ -32,7 +32,7 @@ public class Bounce : MonoBehaviour
         if (transform.position.y <= 0.5f)
         {
             transform.position = new Vector3(transform.position.x, 0.5f , transform.position.z);
-            vel = vel * -1;
+            vel = vel * -0.5f;
         }
     }
 }
