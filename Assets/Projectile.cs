@@ -19,15 +19,15 @@ public class Projectile : MonoBehaviour
     void LaunchBall()
     {
         Debug.Log("Launch!");
-        
+
         // 1. Update velX and velY based on horizontal and vertical components of launch velocity & launch angle
-        
+        float angleDeg2Rad = launchAngle * Mathf.PI / 180;
         // Applying trigonemtery
-        velX = Mathf.Cos(launchAngle) * launchVelocity;
-        velY = Mathf.Sin(launchAngle) * launchVelocity;
+        velX = Mathf.Cos(angleDeg2Rad) * launchVelocity;
+        velY = Mathf.Sin(angleDeg2Rad) * launchVelocity;
         
         // 2. Assign position to new launch height and re-launch the ball!
-        transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.y);
+        transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z);
     }
 
     private void Update()
