@@ -45,6 +45,7 @@ public class Projectile : MonoBehaviour
 
         float dt = Time.fixedDeltaTime;
         float acc = Physics.gravity.y;
+        float friction = 0.8f;
 
         // Update velocity using acceleration over time (velX remains constant)
         velY = velY + acc * dt;
@@ -67,5 +68,13 @@ public class Projectile : MonoBehaviour
             transform.position.y + velY * dt,
             transform.position.z
         );
+
+
+        if (transform.position.y <= 0.5f)
+        {
+            transform.position = new Vector3(transform.position.x, 0.5f, transform.position.z);
+            velY = velY * -0.5f;
+            velX = velX * friction;
+        }
     }
 }
