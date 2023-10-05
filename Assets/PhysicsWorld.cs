@@ -6,7 +6,7 @@ public class PhysicsWorld : MonoBehaviour
 {
     public float dt = 1/30;
     public float t = 0.0f;
-    public List<Physics_Library> bodies;
+    public List<PhysicsBody> bodies;
     public Vector3 gravity = new Vector3 (0f, -9.8f, 0f);
 
     // Start is called before the first frame update
@@ -14,11 +14,25 @@ public class PhysicsWorld : MonoBehaviour
     {
         dt = Time.fixedDeltaTime;
     }
+    
+    void CheckForNewObjects()
+    {
+       PhysicsBody [] bodiesFound = FindObjectsOfType<PhysicsBody>();
+        foreach(PhysicsBody body in bodiesFound)
+        {
+            if (!bodies.Contains(body))
+            {
+                bodies.Add(body);
+            }
+        }
+    }
 
     private void FixedUpdate()
     {
+        CheckForNewObjects();
+
         //Do gravity
-        foreach (Physics_Library body in bodies)
+        foreach (PhysicsBody body in bodies)
         {
             body.velocity += gravity * body.gravityScale * dt;
             // Do kinematics
@@ -27,7 +41,7 @@ public class PhysicsWorld : MonoBehaviour
         t += dt;
 
         // Do Drag
-        foreach(Physics_Library body in bodies)
+        foreach(PhysicsBody body in bodies)
         {
             body.velocity += -(-body.drag * body.velocity) * dt;
         }
