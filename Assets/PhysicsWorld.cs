@@ -6,7 +6,7 @@ public class PhysicsWorld : MonoBehaviour
 {
     public float dt = 1/30;
     public float t = 0.0f;
-    public List<PhysicsBody> bodies;
+    public List<PhysicsBody> bodies = new List<PhysicsBody>();
     public Vector3 gravity = new Vector3 (0f, -9.8f, 0f);
 
     // Start is called before the first frame update

@@ -24,10 +24,11 @@ public class Launch : MonoBehaviour
             0.0f);
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
+            Debug.Log("space key was pressed");
             Shoot();
         }
     }
