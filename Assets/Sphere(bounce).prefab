@@ -12,8 +12,7 @@ GameObject:
   - component: {fileID: 5342963569940344678}
   - component: {fileID: 5342963569940344677}
   - component: {fileID: 5342963569940344676}
-  - component: {fileID: -7246035211580888996}
-  - component: {fileID: -7485385701568672687}
+  - component: {fileID: -5590701914269097730}
   m_Layer: 0
   m_Name: Sphere(bounce)
   m_TagString: Untagged
@@ -99,23 +98,7 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &-7246035211580888996
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5342963569940344674}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1306eb740dcc4584d82265610e2d9016, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 7.64
-  elevationAngleDegrees: 30
-  launchHeight: 0
-  projectilePrefab: {fileID: 5342963569940344674}
---- !u!114 &-7485385701568672687
+--- !u!114 &-5590701914269097730
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
