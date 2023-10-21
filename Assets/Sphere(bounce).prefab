@@ -114,7 +114,7 @@ MonoBehaviour:
   velocity: {x: 0, y: 0, z: 0}
   gravityScale: 1
   friction: 0
-  shape: {fileID: 0}
+  shape: {fileID: -4091584175772306675}
 --- !u!114 &-4091584175772306675
 MonoBehaviour:
   m_ObjectHideFlags: 0

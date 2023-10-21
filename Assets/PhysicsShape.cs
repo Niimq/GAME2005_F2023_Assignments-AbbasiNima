@@ -6,7 +6,9 @@ public abstract class PhysicsShape : MonoBehaviour
 {
     public enum Type
     {
-        Sphere = 0
+        Sphere = 0,
+        halfspace,
+        Plane
     }
     public abstract Type GetShapeType();
 }

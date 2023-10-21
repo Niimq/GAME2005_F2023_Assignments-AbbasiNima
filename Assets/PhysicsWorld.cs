@@ -47,8 +47,12 @@ public class PhysicsWorld : MonoBehaviour
     }
     public bool CheckCollisionBetweenSphere(PhysicsShapeSphere shapeA, PhysicsShapeSphere shapeB)
     {
+        //1. Determine displacement between spheres (difference in position)
         Vector3 displacements = shapeA.transform.position - shapeB.transform.position;
+        //2. Get distance by taking length of the displacement
         float distance = displacements.magnitude;
+
+        //3. If the distance is less than the sum of the radiii, then overlapping.
         if (distance < shapeA.radius + shapeB.radius)
         {
             return true;
@@ -58,18 +62,90 @@ public class PhysicsWorld : MonoBehaviour
             return false;
         } 
     }
+    //public bool CheckCollisionsBetweenSpherePlane(PhysicsShapeSphere sphere, PhysicsShapePlane plane)
+    //{
+        //?????
+
+        // Let a sphere be defined by:
+        //A postion of the center of the sphere
+        //A radius
+
+        // Let a plane be defined by:
+        // A point anywhere on the plane ( we can use transform.position for this)
+        // The orientation of the plane as a quaternion or euler engles (rotation around x, y, and z)
+
+        //1. Find the normal vector perpendicular to the plane
+        //      rotate a basis vector e.g. (0,0,1) by the orientation of the object
+
+        //2. Find the displacement from the point on the plane to the center of the sphere by vector subtraction
+        //      Vec3 displacement = sphere.position - plane.position
+
+        //3. Find the scalar projection of the displacement vector onto the normal vector using dot product
+        //      float projection = Dot(displacement, plane.normal)
+
+        //4. For a PLANE, if the length of the projection is less than the sphere radius, they are overlapping
+        //      bool isColliding = abs(projection) < sphere.radius
+    //}
+
+    public bool CheckCollisionsBetweenSphereHalfSpace(PhysicsShapeSphere sphere, PhysicsShapeHalfSpace halfSpace)
+    {
+        //?????
+
+        // Let a sphere be defined by:
+        //A postion of the center of the sphere
+        //A radius
+
+        // Let a plane be defined by:
+        // A point anywhere on the plane ( we can use transform.position for this)
+        // The orientation of the plane as a quaternion or euler engles (rotation around x, y, and z)
+
+        //1. Find the normal vector perpendicular to the plane
+        //      rotate a basis vector e.g. (0,0,1) by the orientation of the object
+        //Vector3 normal = halfSpace.transform.up;
+        Vector3 normal = halfSpace.transform.rotation * new Vector3(0, 1, 0);
+
+        //2. Find the displacement from the point on the plane to the center of the sphere by vector subtraction
+        //      Vec3 displacement = sphere.position - plane.position
+        Vector3 displacement = sphere.transform.position - halfSpace.transform.position;
+
+        //3. Find the scalar projection of the displacement vector onto the normal vector using dot product
+        //      float projection = Dot(displacement, plane.normal)
+        float projection = Vector3.Dot(displacement, normal);
+
+        //4. For a HALFSPACE, if the projection is less than the sphere radius, they are overlapping
+        //      bool isColliding = projection < sphere.radius
+        bool isColliding = projection < sphere.radius;
+
+        return isColliding;
+    }
 
     public bool CheckCollisionBetween(PhysicsBody bodyA, PhysicsBody bodyB)
     {
-        // Figure out what type of collision to perform e.g.
-        // Sphere-Plane collision detection ...
-        // Sphere-Sphere Collision Detections.
-        // etc.
+        PhysicsShape.Type ShapeOfA = bodyA.shape.GetShapeType();
+        PhysicsShape.Type ShapeOfB = bodyB.shape.GetShapeType();
+
+
+
         if (bodyA.shape == null || bodyB.shape == null) return false;
-        else if (bodyA.shape.GetShapeType() == PhysicsShape.Type.Sphere
-            && bodyB.shape.GetShapeType() == PhysicsShape.Type.Sphere) 
+        else if (ShapeOfA == PhysicsShape.Type.Sphere
+            && ShapeOfB == PhysicsShape.Type.Sphere) 
         {
            return CheckCollisionBetweenSphere((PhysicsShapeSphere)bodyA.shape, (PhysicsShapeSphere)bodyB.shape);
+        }
+        else if (ShapeOfA == PhysicsShape.Type.Sphere
+            && ShapeOfB == PhysicsShape.Type.halfspace)
+        {
+            return CheckCollisionsBetweenSphereHalfSpace((PhysicsShapeSphere)bodyA.shape, (PhysicsShapeHalfSpace)bodyB.shape);
+        }
+        else if (ShapeOfA == PhysicsShape.Type.halfspace
+            && ShapeOfB == PhysicsShape.Type.Sphere)
+        {
+            return CheckCollisionsBetweenSphereHalfSpace((PhysicsShapeSphere)bodyA.shape, (PhysicsShapeHalfSpace)bodyB.shape);
+        }
+        else if (ShapeOfA == PhysicsShape.Type.halfspace
+            && ShapeOfB == PhysicsShape.Type.Sphere)
+        {
+            return false;
         }
         else 
         {
