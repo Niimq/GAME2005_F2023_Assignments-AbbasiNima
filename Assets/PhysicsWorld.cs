@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PhysicsWorld : MonoBehaviour
@@ -62,8 +63,8 @@ public class PhysicsWorld : MonoBehaviour
             return false;
         } 
     }
-    //public bool CheckCollisionsBetweenSpherePlane(PhysicsShapeSphere sphere, PhysicsShapePlane plane)
-    //{
+    public bool CheckCollisionsBetweenSpherePlane(PhysicsShapeSphere sphere, PhysicsShapePlane plane)
+    {
         //?????
 
         // Let a sphere be defined by:
@@ -76,16 +77,21 @@ public class PhysicsWorld : MonoBehaviour
 
         //1. Find the normal vector perpendicular to the plane
         //      rotate a basis vector e.g. (0,0,1) by the orientation of the object
+        Vector3 normal = plane.transform.rotation * new Vector3(0, 1, 0);
 
         //2. Find the displacement from the point on the plane to the center of the sphere by vector subtraction
         //      Vec3 displacement = sphere.position - plane.position
+        Vector3 displacement = sphere.transform.position - plane.transform.position;
 
         //3. Find the scalar projection of the displacement vector onto the normal vector using dot product
         //      float projection = Dot(displacement, plane.normal)
+        float projection = Vector3.Dot(displacement, normal);
 
         //4. For a PLANE, if the length of the projection is less than the sphere radius, they are overlapping
         //      bool isColliding = abs(projection) < sphere.radius
-    //}
+        bool isColliding = Mathf.Abs(projection) < sphere.radius;
+        return isColliding;
+    }
 
     public bool CheckCollisionsBetweenSphereHalfSpace(PhysicsShapeSphere sphere, PhysicsShapeHalfSpace halfSpace)
     {
@@ -103,6 +109,7 @@ public class PhysicsWorld : MonoBehaviour
         //      rotate a basis vector e.g. (0,0,1) by the orientation of the object
         //Vector3 normal = halfSpace.transform.up;
         Vector3 normal = halfSpace.transform.rotation * new Vector3(0, 1, 0);
+        
 
         //2. Find the displacement from the point on the plane to the center of the sphere by vector subtraction
         //      Vec3 displacement = sphere.position - plane.position
@@ -128,26 +135,47 @@ public class PhysicsWorld : MonoBehaviour
 
         if (bodyA.shape == null || bodyB.shape == null) return false;
         else if (ShapeOfA == PhysicsShape.Type.Sphere
-            && ShapeOfB == PhysicsShape.Type.Sphere) 
+            && ShapeOfB == PhysicsShape.Type.Sphere)
         {
-           return CheckCollisionBetweenSphere((PhysicsShapeSphere)bodyA.shape, (PhysicsShapeSphere)bodyB.shape);
+            return CheckCollisionBetweenSphere((PhysicsShapeSphere)bodyA.shape, (PhysicsShapeSphere)bodyB.shape);
         }
         else if (ShapeOfA == PhysicsShape.Type.Sphere
             && ShapeOfB == PhysicsShape.Type.halfspace)
         {
             return CheckCollisionsBetweenSphereHalfSpace((PhysicsShapeSphere)bodyA.shape, (PhysicsShapeHalfSpace)bodyB.shape);
         }
+        // Half-Space collision with sphere and itself
         else if (ShapeOfA == PhysicsShape.Type.halfspace
             && ShapeOfB == PhysicsShape.Type.Sphere)
         {
-            return CheckCollisionsBetweenSphereHalfSpace((PhysicsShapeSphere)bodyA.shape, (PhysicsShapeHalfSpace)bodyB.shape);
+            return CheckCollisionsBetweenSphereHalfSpace((PhysicsShapeSphere)bodyB.shape, (PhysicsShapeHalfSpace)bodyA.shape);
         }
         else if (ShapeOfA == PhysicsShape.Type.halfspace
-            && ShapeOfB == PhysicsShape.Type.Sphere)
+            && ShapeOfB == PhysicsShape.Type.halfspace)
         {
             return false;
         }
-        else 
+        // Plane collision with it self and also halfspace
+        else if (ShapeOfA == PhysicsShape.Type.Plane
+            && ShapeOfB == PhysicsShape.Type.Sphere)
+        { 
+            return CheckCollisionsBetweenSpherePlane((PhysicsShapeSphere)bodyB.shape, (PhysicsShapePlane)bodyA.shape);
+        }
+        else if (ShapeOfA == PhysicsShape.Type.Sphere
+            && ShapeOfB == PhysicsShape.Type.Plane)
+        {
+            return CheckCollisionsBetweenSpherePlane((PhysicsShapeSphere)bodyA.shape, (PhysicsShapePlane)bodyB.shape);
+        }
+        else if (ShapeOfA == PhysicsShape.Type.Plane
+            && ShapeOfB == PhysicsShape.Type.halfspace)
+        { return false; }
+        else if (ShapeOfA == PhysicsShape.Type.halfspace
+            && ShapeOfB == PhysicsShape.Type.Plane)
+        { return false; }
+        else if (ShapeOfA == PhysicsShape.Type.Plane
+            && ShapeOfB == PhysicsShape.Type.Plane)
+        { return false; }
+        else
         {
             throw new System.Exception("UnKnow Shape Type!"); // throwing an exception to know if we did not implement the new shape's collision
         }
