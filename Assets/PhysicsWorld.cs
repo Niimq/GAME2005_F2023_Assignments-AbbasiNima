@@ -90,6 +90,8 @@ public class PhysicsWorld : MonoBehaviour
         //4. For a PLANE, if the length of the projection is less than the sphere radius, they are overlapping
         //      bool isColliding = abs(projection) < sphere.radius
         bool isColliding = Mathf.Abs(projection) < sphere.radius;
+        if (isColliding) {sphere.GetComponent<PhysicsBody>().velocity = Vector3.zero; }
+        
         return isColliding;
     }
 
