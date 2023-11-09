@@ -124,6 +124,7 @@ public class PhysicsWorld : MonoBehaviour
         //4. For a HALFSPACE, if the projection is less than the sphere radius, they are overlapping
         //      bool isColliding = projection < sphere.radius
         bool isColliding = projection < sphere.radius;
+        if (isColliding) { sphere.GetComponent<PhysicsBody>().velocity = Vector3.zero; }
 
         return isColliding;
     }
