@@ -9,6 +9,7 @@ public class PhysicsWorld : MonoBehaviour
     public float t = 0.0f;
     public List<PhysicsBody> bodies;
     public Vector3 gravity = new Vector3(0f, -9.8f, 0f);
+    public 
 
     // Start is called before the first frame update
     void Start()
@@ -36,7 +37,7 @@ public class PhysicsWorld : MonoBehaviour
         foreach (PhysicsBody body in bodies)
         {
             // Apply acceleration due to gravity
-          //  body.velocity += gravity * body.gravityScale * dt;
+            body.velocity += gravity * body.gravityScale * dt;
 
             // Damp Motion
             body.velocity *= (1.0f - (body.friction * dt));
@@ -90,8 +91,12 @@ public class PhysicsWorld : MonoBehaviour
         //4. For a PLANE, if the length of the projection is less than the sphere radius, they are overlapping
         //      bool isColliding = abs(projection) < sphere.radius
         bool isColliding = Mathf.Abs(projection) < sphere.radius;
-        if (isColliding) {sphere.GetComponent<PhysicsBody>().velocity = Vector3.zero; }
-        
+        if (isColliding)
+        {
+            sphere.GetComponent<PhysicsBody>().velocity = Vector3.zero;
+            sphere.GetComponent<PhysicsBody>().gravityScale = 0;
+        }
+
         return isColliding;
     }
 
@@ -124,7 +129,11 @@ public class PhysicsWorld : MonoBehaviour
         //4. For a HALFSPACE, if the projection is less than the sphere radius, they are overlapping
         //      bool isColliding = projection < sphere.radius
         bool isColliding = projection < sphere.radius;
-        if (isColliding) { sphere.GetComponent<PhysicsBody>().velocity = Vector3.zero; }
+        if (isColliding) 
+        {
+            sphere.GetComponent<PhysicsBody>().velocity = Vector3.zero;
+            sphere.GetComponent<PhysicsBody>().gravityScale = 0;
+        }
 
         return isColliding;
     }
