@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -57,6 +58,12 @@ public class PhysicsWorld : MonoBehaviour
         //3. If the distance is less than the sum of the radiii, then overlapping.
         if (distance < shapeA.radius + shapeB.radius)
         {
+            
+            shapeA.GetComponent<PhysicsBody>().velocity = Vector3.zero;
+            shapeB.GetComponent<PhysicsBody>().velocity = Vector3.zero;
+
+            shapeA.GetComponent<PhysicsBody>().gravityScale = 0;
+            shapeB.GetComponent<PhysicsBody>().gravityScale = 0;
             return true;
         }
         else
