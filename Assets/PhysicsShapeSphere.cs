@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PhysicsShapeSphere : PhysicsShape
 {
-    public float radius = 1.0f;
+    public float radius = 0.5f;
 
    public override Type GetShapeType()
     {
