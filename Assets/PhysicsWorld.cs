@@ -10,7 +10,7 @@ public class PhysicsWorld : MonoBehaviour
     public float t = 0.0f;
     public List<PhysicsBody> bodies;
     public Vector3 gravity = new Vector3(0f, -9.8f, 0f);
-    public 
+    public bool colliding;
 
     // Start is called before the first frame update
     void Start()
@@ -98,13 +98,23 @@ public class PhysicsWorld : MonoBehaviour
         //4. For a PLANE, if the length of the projection is less than the sphere radius, they are overlapping
         //      bool isColliding = abs(projection) < sphere.radius
         bool isColliding = Mathf.Abs(projection) < sphere.radius;
+        colliding = isColliding;
         if (isColliding)
         {
-            sphere.GetComponent<PhysicsBody>().velocity = Vector3.zero;
-            sphere.GetComponent<PhysicsBody>().gravityScale = 0;
+            //sphere.GetComponent<PhysicsBody>().velocity = Vector3.zero;
+            //sphere.GetComponent<PhysicsBody>().gravityScale = 0;
+            sphere.transform.position += projection * normal;
         }
 
         return isColliding;
+    }
+    void FixPositionAfterCollision()
+    {
+        PhysicsShapeSphere sphere;
+        if (colliding == true)
+        {
+           
+        }
     }
 
     public bool CheckCollisionsBetweenSphereHalfSpace(PhysicsShapeSphere sphere, PhysicsShapeHalfSpace halfSpace)
@@ -136,11 +146,17 @@ public class PhysicsWorld : MonoBehaviour
         //4. For a HALFSPACE, if the projection is less than the sphere radius, they are overlapping
         //      bool isColliding = projection < sphere.radius
         bool isColliding = projection < sphere.radius;
+        colliding = isColliding;
         if (isColliding) 
         {
-            sphere.GetComponent<PhysicsBody>().velocity = Vector3.zero;
-            sphere.GetComponent<PhysicsBody>().gravityScale = 0;
+            //sphere.GetComponent<PhysicsBody>().velocity = Vector3.zero;
+            //sphere.GetComponent<PhysicsBody>().gravityScale = 0;
+            sphere.transform.position += projection * normal;
         }
+        //if (projection < 0)
+        //{
+        //    sphere.transform.position += projection * normal;
+        //}
 
         return isColliding;
     }
