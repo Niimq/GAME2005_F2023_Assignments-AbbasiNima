@@ -58,12 +58,24 @@ public class PhysicsWorld : MonoBehaviour
         //3. If the distance is less than the sum of the radiii, then overlapping.
         if (distance < shapeA.radius + shapeB.radius)
         {
-            
-            shapeA.GetComponent<PhysicsBody>().velocity = Vector3.zero;
-            shapeB.GetComponent<PhysicsBody>().velocity = Vector3.zero;
 
-            shapeA.GetComponent<PhysicsBody>().gravityScale = 0;
-            shapeB.GetComponent<PhysicsBody>().gravityScale = 0;
+            //displacements.Normalize();
+            Vector3 v1 = shapeA.GetComponent<PhysicsBody>().velocity;
+            float X1 = Vector3.Dot(displacements, v1);
+            v1.x = displacements.x * X1;
+            v1.y = displacements.y * X1;
+
+            Vector3 displacement2 = displacements * -1;
+            Vector3 v2 = shapeB.GetComponent<PhysicsBody>().velocity;
+            float X2 = Vector3.Dot(displacement2, v2);
+            v2.x = displacement2.x * X1;
+            v2.y = displacement2.y - v2.x;
+
+            shapeA.GetComponent<PhysicsBody>().velocity = v1;
+            shapeB.GetComponent<PhysicsBody>().velocity = v2;
+
+            //shapeA.GetComponent<PhysicsBody>().gravityScale = 0;
+            //shapeB.GetComponent<PhysicsBody>().gravityScale = 0;
             return true;
         }
         else
