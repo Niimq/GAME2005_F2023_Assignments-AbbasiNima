@@ -103,6 +103,7 @@ public class PhysicsWorld : MonoBehaviour
         {
             sphere.GetComponent<PhysicsBody>().gravityScale = 0;
             sphere.transform.position += (sphere.radius - projection + 0.01f) * normal;
+            sphere.GetComponent<PhysicsBody>().velocity *= (1.0f - (sphere.GetComponent<PhysicsBody>().friction * dt));
         }
 
         return isColliding;
@@ -140,8 +141,8 @@ public class PhysicsWorld : MonoBehaviour
         colliding = isColliding;
         if (isColliding) 
         {
-            sphere.GetComponent<PhysicsBody>().gravityScale = 0;
             sphere.transform.position += normal * (sphere.radius - projection + 0.01f);
+            sphere.GetComponent<PhysicsBody>().velocity *= (1.0f - (sphere.GetComponent<PhysicsBody>().friction * dt));
         }
 
         return isColliding;
