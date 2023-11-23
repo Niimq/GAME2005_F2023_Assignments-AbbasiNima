@@ -39,12 +39,28 @@ public class PhysicsWorld : MonoBehaviour
         {
             // Apply acceleration due to gravity
             body.velocity += gravity * body.gravityScale * dt;
+            
+            //Vector3 GravityForce = gravity * body.mass * body.gravityScale;
+            //body.AddForce(GravityForce);
+
+            //Vector3 acceleration = body.NetForce / body.mass;
+
+            //body.velocity += acceleration * dt;
 
             // Damp Motion
             body.velocity *= (1.0f - (body.friction * dt));
 
             // Do kinematics
             body.transform.position += body.velocity * dt;
+
+            //// Gravity force
+            //Debug.DrawLine(body.transform.position, body.transform.position + GravityForce, new Color(0.5f, 0.0f, 0.5f));
+
+            //// Net force
+            //Debug.DrawLine(body.transform.position, body.transform.position + body.NetForce, Color.blue);
+
+            //// Velocity
+            //Debug.DrawLine(body.transform.position, body.transform.position + body.velocity, Color.red);
         }
 
     }
@@ -114,9 +130,12 @@ public class PhysicsWorld : MonoBehaviour
         if (isColliding)
         {
             sphere.GetComponent<PhysicsBody>().gravityScale = 0;
-            sphere.transform.position += (sphere.radius - projection + 0.01f) * normal;
+            sphere.transform.position += (sphere.radius - projection) * normal;
             sphere.GetComponent<PhysicsBody>().velocity *= (1.0f - (sphere.GetComponent<PhysicsBody>().friction * dt));
         }
+
+        // Determine forces acting on the object
+
 
         return isColliding;
     }
@@ -153,7 +172,7 @@ public class PhysicsWorld : MonoBehaviour
         colliding = isColliding;
         if (isColliding) 
         {
-            sphere.transform.position += normal * (sphere.radius - projection + 0.01f);
+            sphere.transform.position += normal * (sphere.radius - projection);
             sphere.GetComponent<PhysicsBody>().velocity *= (1.0f - (sphere.GetComponent<PhysicsBody>().friction * dt));
         }
 

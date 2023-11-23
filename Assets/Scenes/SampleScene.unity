@@ -160,7 +160,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5342963569940344679, guid: a29befdf43bd9c5488d0614c712d3fc6, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 5.43
+      value: 4.84
       objectReference: {fileID: 0}
     - target: {fileID: 5342963569940344679, guid: a29befdf43bd9c5488d0614c712d3fc6, type: 3}
       propertyPath: m_LocalRotation.w
@@ -241,6 +241,7 @@ MonoBehaviour:
   velocity: {x: 0, y: 0, z: 0}
   gravityScale: 1
   friction: 0
+  mass: 1
   shape: {fileID: 451715342}
 --- !u!135 &451715344
 SphereCollider:
@@ -369,6 +370,7 @@ MonoBehaviour:
   velocity: {x: 0, y: 0, z: 0}
   gravityScale: 1
   friction: 0
+  mass: 1
   shape: {fileID: 473812924}
 --- !u!135 &473812926
 SphereCollider:
@@ -441,7 +443,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 473812923}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 9.3, y: 5.16, z: 7.06}
+  m_LocalPosition: {x: 9.3, y: 5.16, z: 6.12}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -497,6 +499,7 @@ MonoBehaviour:
   velocity: {x: 0, y: 0, z: 0}
   gravityScale: 1
   friction: 0
+  mass: 1
   shape: {fileID: 488128212}
 --- !u!135 &488128214
 SphereCollider:
@@ -569,7 +572,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 488128211}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.48, y: 0.7, z: 3.293476}
+  m_LocalPosition: {x: -0.48, y: 0.7, z: 2.56}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -625,6 +628,7 @@ MonoBehaviour:
   velocity: {x: 0, y: 0, z: 0}
   gravityScale: 1
   friction: 0
+  mass: 1
   shape: {fileID: 493385793}
 --- !u!135 &493385795
 SphereCollider:
@@ -697,7 +701,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 493385792}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.04, y: 3.95, z: 6.98}
+  m_LocalPosition: {x: -0.04, y: 3.95, z: 6.36}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -739,6 +743,7 @@ MonoBehaviour:
   bodies:
   - {fileID: 0}
   gravity: {x: 0, y: -9.8, z: 0}
+  colliding: 0
 --- !u!4 &651934217
 Transform:
   m_ObjectHideFlags: 0
@@ -884,6 +889,7 @@ MonoBehaviour:
   velocity: {x: 0, y: 0, z: 0}
   gravityScale: 0
   friction: 0
+  mass: 1
   shape: {fileID: 722985456}
 --- !u!114 &722985456
 MonoBehaviour:
@@ -1109,6 +1115,7 @@ MonoBehaviour:
   velocity: {x: 0, y: 0, z: 0}
   gravityScale: 1
   friction: 0
+  mass: 1
   shape: {fileID: 1115296430}
 --- !u!135 &1115296432
 SphereCollider:
@@ -1217,8 +1224,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1306eb740dcc4584d82265610e2d9016, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 2
-  elevationAngleDegrees: -12
+  speed: 26.1
+  elevationAngleDegrees: -2.06
   launchHeight: 0
   projectilePrefab: {fileID: 5342963569940344674, guid: a29befdf43bd9c5488d0614c712d3fc6, type: 3}
 --- !u!4 &1168492701
@@ -1350,6 +1357,7 @@ MonoBehaviour:
   velocity: {x: 0, y: 0, z: 0}
   gravityScale: 1
   friction: 0
+  mass: 1
   shape: {fileID: 1387546719}
 --- !u!135 &1387546721
 SphereCollider:
@@ -1477,6 +1485,7 @@ MonoBehaviour:
   velocity: {x: 0, y: 0, z: 0}
   gravityScale: 0
   friction: 0
+  mass: 1
   shape: {fileID: 1552994415}
 --- !u!64 &1552994417
 MeshCollider:
@@ -1606,6 +1615,7 @@ MonoBehaviour:
   velocity: {x: 0, y: 0, z: 0}
   gravityScale: 1
   friction: 0
+  mass: 1
   shape: {fileID: 1710009087}
 --- !u!135 &1710009089
 SphereCollider:
@@ -1739,6 +1749,7 @@ MonoBehaviour:
   velocity: {x: 0, y: 0, z: 0}
   gravityScale: 1
   friction: 0
+  mass: 1
   shape: {fileID: 1852914545}
 --- !u!135 &1852914547
 SphereCollider:
