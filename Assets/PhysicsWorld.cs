@@ -38,20 +38,21 @@ public class PhysicsWorld : MonoBehaviour
         foreach (PhysicsBody body in bodies)
         {
             // Apply acceleration due to gravity
-            body.velocity += gravity * body.gravityScale * dt;
+            //body.velocity += body.NetForce;
             
-            //Vector3 GravityForce = gravity * body.mass * body.gravityScale;
-            //body.AddForce(GravityForce);
+            Vector3 GravityForce = gravity * body.mass * body.gravityScale * dt * dt;
+            body.AddForce(GravityForce);
 
-            //Vector3 acceleration = body.NetForce / body.mass;
-
-            //body.velocity += acceleration * dt;
+            
+            // Velocity
+            Vector3 VelocityForce = body.velocity * dt;
+            body.AddForce(VelocityForce);
 
             // Damp Motion
-            body.velocity *= (1.0f - (body.friction * dt));
-
+            //body.velocity *= (1.0f - (body.friction * dt));
+            Vector3 acceleration = body.NetForce / body.mass;
             // Do kinematics
-            body.transform.position += body.velocity * dt;
+            body.transform.position += acceleration;
 
             //// Gravity force
             //Debug.DrawLine(body.transform.position, body.transform.position + GravityForce, new Color(0.5f, 0.0f, 0.5f));
@@ -74,7 +75,7 @@ public class PhysicsWorld : MonoBehaviour
         //3. If the distance is less than the sum of the radiii, then overlapping.
         if (distance < shapeA.radius + shapeB.radius)
         {
-
+        /*
             //displacements.Normalize();
             Vector3 v1 = shapeA.GetComponent<PhysicsBody>().velocity;
             float X1 = Vector3.Dot(displacements, v1);
@@ -89,6 +90,7 @@ public class PhysicsWorld : MonoBehaviour
 
             shapeA.GetComponent<PhysicsBody>().velocity = v1;
             shapeB.GetComponent<PhysicsBody>().velocity = v2;
+        */
 
             //shapeA.GetComponent<PhysicsBody>().gravityScale = 0;
             //shapeB.GetComponent<PhysicsBody>().gravityScale = 0;
