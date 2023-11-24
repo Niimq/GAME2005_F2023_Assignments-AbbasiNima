@@ -37,24 +37,25 @@ public class PhysicsWorld : MonoBehaviour
         //Do gravity
         foreach (PhysicsBody body in bodies)
         {
-            // Apply acceleration due to gravity
-            //body.velocity += body.NetForce;
-            
-            Vector3 GravityForce = gravity * body.mass * body.gravityScale * dt * dt;
+            // Gravity
+            Vector3 GravityForce = gravity * body.mass * body.gravityScale * dt;
             body.AddForce(GravityForce);
-
             
             // Velocity
             Vector3 VelocityForce = body.velocity * dt;
             body.AddForce(VelocityForce);
 
+            // Acceleration
+            Vector3 acceleration = VelocityForce;
+            acceleration += body.NetForce / body.mass;
+            
+            // Do kinematics
+            body.transform.position += acceleration * dt;
+            
+            
             // Damp Motion
             //body.velocity *= (1.0f - (body.friction * dt));
-            Vector3 acceleration = body.NetForce / body.mass;
-            // Do kinematics
-            body.transform.position += acceleration;
-
-            //// Gravity force
+            /*Gravity force
             //Debug.DrawLine(body.transform.position, body.transform.position + GravityForce, new Color(0.5f, 0.0f, 0.5f));
 
             //// Net force
@@ -62,6 +63,7 @@ public class PhysicsWorld : MonoBehaviour
 
             //// Velocity
             //Debug.DrawLine(body.transform.position, body.transform.position + body.velocity, Color.red);
+            */ 
         }
 
     }
@@ -75,8 +77,8 @@ public class PhysicsWorld : MonoBehaviour
         //3. If the distance is less than the sum of the radiii, then overlapping.
         if (distance < shapeA.radius + shapeB.radius)
         {
-        /*
-            //displacements.Normalize();
+            /*displacements.Normalize();
+            
             Vector3 v1 = shapeA.GetComponent<PhysicsBody>().velocity;
             float X1 = Vector3.Dot(displacements, v1);
             v1.x = displacements.x * X1;
@@ -108,7 +110,7 @@ public class PhysicsWorld : MonoBehaviour
         // Let a sphere be defined by:
         //A postion of the center of the sphere
         //A radius
-
+        Vector3 FrictionForce = Vector3.zero;
         // Let a plane be defined by:
         // A point anywhere on the plane ( we can use transform.position for this)
         // The orientation of the plane as a quaternion or euler engles (rotation around x, y, and z)
@@ -131,9 +133,14 @@ public class PhysicsWorld : MonoBehaviour
         colliding = isColliding;
         if (isColliding)
         {
-            sphere.GetComponent<PhysicsBody>().gravityScale = 0;
+            FrictionForce = (sphere.GetComponent<PhysicsBody>().friction * dt) * -1 * (sphere.GetComponent<PhysicsBody>().velocity * dt);
+            FrictionForce.Normalize();
+            sphere.GetComponent<PhysicsBody>().AddForce(normal);
+            sphere.GetComponent<PhysicsBody>().AddForce(FrictionForce);
             sphere.transform.position += (sphere.radius - projection) * normal;
-            sphere.GetComponent<PhysicsBody>().velocity *= (1.0f - (sphere.GetComponent<PhysicsBody>().friction * dt));
+
+
+            //sphere.GetComponent<PhysicsBody>().velocity *= (1.0f - (sphere.GetComponent<PhysicsBody>().friction * dt));
         }
 
         // Determine forces acting on the object
@@ -149,7 +156,7 @@ public class PhysicsWorld : MonoBehaviour
         // Let a sphere be defined by:
         //A postion of the center of the sphere
         //A radius
-
+        Vector3 FrictionForce = Vector3.zero;
         // Let a plane be defined by:
         // A point anywhere on the plane ( we can use transform.position for this)
         // The orientation of the plane as a quaternion or euler engles (rotation around x, y, and z)
@@ -174,8 +181,11 @@ public class PhysicsWorld : MonoBehaviour
         colliding = isColliding;
         if (isColliding) 
         {
-            sphere.transform.position += normal * (sphere.radius - projection);
-            sphere.GetComponent<PhysicsBody>().velocity *= (1.0f - (sphere.GetComponent<PhysicsBody>().friction * dt));
+            FrictionForce = (sphere.GetComponent<PhysicsBody>().friction * dt) * -1 * (sphere.GetComponent<PhysicsBody>().velocity * dt);
+            FrictionForce.Normalize();
+            sphere.GetComponent<PhysicsBody>().AddForce(normal * dt);
+            sphere.GetComponent<PhysicsBody>().AddForce(FrictionForce);
+            sphere.transform.position += (sphere.radius - projection) * normal;
         }
 
         return isColliding;
