@@ -135,7 +135,8 @@ public class PhysicsWorld : MonoBehaviour
         {
             FrictionForce = (sphere.GetComponent<PhysicsBody>().friction * dt) * -1 * (sphere.GetComponent<PhysicsBody>().velocity * dt);
             FrictionForce.Normalize();
-            sphere.GetComponent<PhysicsBody>().AddForce(normal);
+            Vector3 NormalForce = gravity * -1;
+            sphere.GetComponent<PhysicsBody>().AddForce(NormalForce * dt);
             sphere.GetComponent<PhysicsBody>().AddForce(FrictionForce);
             sphere.transform.position += (sphere.radius - projection) * normal;
 
