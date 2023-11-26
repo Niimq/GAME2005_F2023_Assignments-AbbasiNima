@@ -38,32 +38,32 @@ public class PhysicsWorld : MonoBehaviour
         foreach (PhysicsBody body in bodies)
         {
             // Gravity
-            Vector3 GravityForce = gravity * body.mass * body.gravityScale * dt;
+            Vector3 GravityForce = gravity * body.Mass * body.gravityScale * dt;
             body.AddForce(GravityForce);
             
             // Velocity
-            Vector3 VelocityForce = body.velocity * dt;
-            body.AddForce(VelocityForce);
+           // Vector3 VelocityForce = body.velocity * dt;
+           // body.AddForce(VelocityForce);
 
             // Acceleration
-            Vector3 acceleration = VelocityForce;
-            acceleration += body.NetForce / body.mass;
-            
+           Vector3 acceleration = body.NetForce / body.mass;
+            body.velocity += acceleration * dt;
+
             // Do kinematics
-            body.transform.position += acceleration * dt;
-            
-            
+            body.transform.position += body.velocity * dt;
+
+
             // Damp Motion
-            //body.velocity *= (1.0f - (body.friction * dt));
-            /*Gravity force
-            //Debug.DrawLine(body.transform.position, body.transform.position + GravityForce, new Color(0.5f, 0.0f, 0.5f));
+            body.velocity *= (1.0f - (body.friction * dt));
+            //Gravity force
+            Debug.DrawLine(body.transform.position, body.transform.position + GravityForce, new Color(0.5f, 0.0f, 0.5f));
 
-            //// Net force
-            //Debug.DrawLine(body.transform.position, body.transform.position + body.NetForce, Color.blue);
+           // Net force
+            Debug.DrawLine(body.transform.position, body.transform.position + body.NetForce, Color.blue);
 
-            //// Velocity
-            //Debug.DrawLine(body.transform.position, body.transform.position + body.velocity, Color.red);
-            */ 
+           // Velocity
+            Debug.DrawLine(body.transform.position, body.transform.position + body.velocity, Color.red);
+
         }
 
     }
@@ -133,14 +133,12 @@ public class PhysicsWorld : MonoBehaviour
         colliding = isColliding;
         if (isColliding)
         {
+            sphere.transform.position += (sphere.radius - projection) * normal;
             FrictionForce = (sphere.GetComponent<PhysicsBody>().friction * dt) * -1 * (sphere.GetComponent<PhysicsBody>().velocity * dt);
             FrictionForce.Normalize();
             Vector3 NormalForce = gravity * -1;
             sphere.GetComponent<PhysicsBody>().AddForce(NormalForce * dt);
             sphere.GetComponent<PhysicsBody>().AddForce(FrictionForce);
-            sphere.transform.position += (sphere.radius - projection) * normal;
-
-
             //sphere.GetComponent<PhysicsBody>().velocity *= (1.0f - (sphere.GetComponent<PhysicsBody>().friction * dt));
         }
 
@@ -182,11 +180,12 @@ public class PhysicsWorld : MonoBehaviour
         colliding = isColliding;
         if (isColliding) 
         {
-            FrictionForce = (sphere.GetComponent<PhysicsBody>().friction * dt) * -1 * (sphere.GetComponent<PhysicsBody>().velocity * dt);
+            sphere.transform.position += (sphere.radius - projection) * normal;
+            FrictionForce = (sphere.GetComponent<PhysicsBody>().friction * dt)  * (-1 * sphere.GetComponent<PhysicsBody>().velocity * dt);
             FrictionForce.Normalize();
             sphere.GetComponent<PhysicsBody>().AddForce(normal * dt);
             sphere.GetComponent<PhysicsBody>().AddForce(FrictionForce);
-            sphere.transform.position += (sphere.radius - projection) * normal;
+            
         }
 
         return isColliding;
