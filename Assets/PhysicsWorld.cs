@@ -133,13 +133,19 @@ public class PhysicsWorld : MonoBehaviour
         colliding = isColliding;
         if (isColliding)
         {
-            sphere.transform.position += (sphere.radius - projection) * normal;
-            FrictionForce = (sphere.GetComponent<PhysicsBody>().friction * dt) * -1 * (sphere.GetComponent<PhysicsBody>().velocity * dt);
-            FrictionForce.Normalize();
-            Vector3 NormalForce = gravity * -1;
-            sphere.GetComponent<PhysicsBody>().AddForce(NormalForce * dt);
+            Vector3 mtv = (sphere.radius - projection) * normal;
+            sphere.transform.position += mtv;
+
+            Vector3 FGravityPerp = Vector3.Dot(gravity, normal) * normal;
+            Vector3 NormalForce = FGravityPerp * -1;
+            NormalForce.Normalize();
+            sphere.GetComponent<PhysicsBody>().AddForce(NormalForce);
             sphere.GetComponent<PhysicsBody>().AddForce(FrictionForce);
+
+
             //sphere.GetComponent<PhysicsBody>().velocity *= (1.0f - (sphere.GetComponent<PhysicsBody>().friction * dt));
+            //FrictionForce = (sphere.GetComponent<PhysicsBody>().friction * dt) * -1 * (sphere.GetComponent<PhysicsBody>().velocity * dt);
+            //FrictionForce.Normalize();
         }
 
         // Determine forces acting on the object
@@ -178,14 +184,25 @@ public class PhysicsWorld : MonoBehaviour
         //      bool isColliding = projection < sphere.radius
         bool isColliding = projection <= sphere.radius;
         colliding = isColliding;
+
         if (isColliding) 
         {
-            sphere.transform.position += (sphere.radius - projection) * normal;
-            FrictionForce = (sphere.GetComponent<PhysicsBody>().friction * dt)  * (-1 * sphere.GetComponent<PhysicsBody>().velocity * dt);
-            FrictionForce.Normalize();
-            sphere.GetComponent<PhysicsBody>().AddForce(normal * dt);
-            sphere.GetComponent<PhysicsBody>().AddForce(FrictionForce);
+            Vector3 mtv = (sphere.radius - projection) * normal;
+            sphere.transform.position += mtv;
+
             
+            Vector3 FGravityPerp = Vector3.Dot(gravity, normal) * normal;
+            Vector3 NormalForce = -FGravityPerp;
+            NormalForce.Normalize();
+            sphere.GetComponent<PhysicsBody>().AddForce(NormalForce);
+
+
+
+            FrictionForce = (sphere.GetComponent<PhysicsBody>().friction * dt)  * (-1 * sphere.GetComponent<PhysicsBody>().velocity * dt);
+           // FrictionForce.Normalize();
+
+            sphere.GetComponent<PhysicsBody>().AddForce(FrictionForce);
+
         }
 
         return isColliding;
