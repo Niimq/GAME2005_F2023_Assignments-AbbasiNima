@@ -48,13 +48,13 @@ public class PhysicsWorld : MonoBehaviour
             // Acceleration
            Vector3 acceleration = body.NetForce / body.mass;
             body.velocity += acceleration * dt;
-
+            
+            // Damp Motion
+            body.velocity *= (1.0f - (body.friction * dt));
+            
             // Do kinematics
             body.transform.position += body.velocity * dt;
 
-
-            // Damp Motion
-            body.velocity *= (1.0f - (body.friction * dt));
             //Gravity force
             Debug.DrawLine(body.transform.position, body.transform.position + GravityForce, new Color(0.5f, 0.0f, 0.5f));
 
@@ -131,15 +131,23 @@ public class PhysicsWorld : MonoBehaviour
         //      bool isColliding = abs(projection) < sphere.radius
         bool isColliding = Mathf.Abs(projection) <= sphere.radius;
         colliding = isColliding;
+        float fgDotNormal = Vector3.Dot(gravity, normal);
+
         if (isColliding)
         {
             Vector3 mtv = (sphere.radius - projection) * normal;
             sphere.transform.position += mtv;
+            if (fgDotNormal < 0.0f)
+            {
+                Vector3 FGravityPerp = fgDotNormal * normal;
 
-            Vector3 FGravityPerp = Vector3.Dot(gravity, normal) * normal;
-            Vector3 NormalForce = FGravityPerp * -1;
-            NormalForce.Normalize();
-            sphere.GetComponent<PhysicsBody>().AddForce(NormalForce);
+                Vector3 NormalForce = -FGravityPerp;
+
+                NormalForce.Normalize();
+
+                sphere.GetComponent<PhysicsBody>().AddForce(NormalForce);
+
+            }
             sphere.GetComponent<PhysicsBody>().AddForce(FrictionForce);
 
 
@@ -185,17 +193,25 @@ public class PhysicsWorld : MonoBehaviour
         bool isColliding = projection <= sphere.radius;
         colliding = isColliding;
 
+        float fgDotNormal = Vector3.Dot(gravity, normal);
+
         if (isColliding) 
         {
             Vector3 mtv = (sphere.radius - projection) * normal;
             sphere.transform.position += mtv;
-
+            if (fgDotNormal < 0.0f)
+            { 
+                Vector3 FGravityPerp = fgDotNormal * normal;
             
-            Vector3 FGravityPerp = Vector3.Dot(gravity, normal) * normal;
-            Vector3 NormalForce = -FGravityPerp;
-            NormalForce.Normalize();
-            sphere.GetComponent<PhysicsBody>().AddForce(NormalForce);
+                Vector3 NormalForce = -FGravityPerp;
+            
+                NormalForce.Normalize();
+            
+                sphere.GetComponent<PhysicsBody>().AddForce(NormalForce);
 
+            }
+            
+            
 
 
             FrictionForce = (sphere.GetComponent<PhysicsBody>().friction * dt)  * (-1 * sphere.GetComponent<PhysicsBody>().velocity * dt);
