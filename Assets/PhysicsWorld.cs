@@ -30,6 +30,18 @@ public class PhysicsWorld : MonoBehaviour
             }
         }
     }
+    Vector3 GetGravityForce(PhysicsBody body)
+    { 
+        return gravity * body.Mass * body.gravityScale;
+    }
+
+    private void ResetNetForces()
+    {
+        foreach (PhysicsBody body in bodies)
+        {
+            body.ResetForces();
+        }
+    }
 
     private void ApplyKinematics()
     {
@@ -37,36 +49,39 @@ public class PhysicsWorld : MonoBehaviour
         //Do gravity
         foreach (PhysicsBody body in bodies)
         {
-            // Gravity
-            Vector3 GravityForce = gravity * body.Mass * body.gravityScale * dt;
-            body.AddForce(GravityForce);
-            
-            // Velocity
-           // Vector3 VelocityForce = body.velocity * dt;
-           // body.AddForce(VelocityForce);
+             // Do kinematics
+             body.transform.position += body.velocity * dt;
 
-            // Acceleration
-           Vector3 acceleration = body.NetForce / body.mass;
-            body.velocity += acceleration * dt;
-            
-            // Damp Motion
-            body.velocity *= (1.0f - (body.friction * dt));
-            
-            // Do kinematics
-            body.transform.position += body.velocity * dt;
-
-            //Gravity force
-            Debug.DrawLine(body.transform.position, body.transform.position + GravityForce, new Color(0.5f, 0.0f, 0.5f));
-
-           // Net force
-            Debug.DrawLine(body.transform.position, body.transform.position + body.NetForce, Color.blue);
-
-           // Velocity
-            Debug.DrawLine(body.transform.position, body.transform.position + body.velocity, Color.red);
-
+             // Velocity
+             Debug.DrawLine(body.transform.position, body.transform.position + body.velocity, Color.red);
+             // Net force
+             Debug.DrawLine(body.transform.position, body.transform.position + body.NetForce, Color.blue, 25.0f, false);
         }
 
     }
+
+    private void applyAcceleration()
+    {
+        foreach (PhysicsBody body in bodies)
+        {
+
+            // Gravity
+            Vector3 GravityForce = GetGravityForce(body);
+            body.AddForce(GravityForce);
+            //Gravity force
+             Debug.DrawLine(body.transform.position, body.transform.position + GravityForce, Color.yellow);
+
+
+            // Acceleration
+            Vector3 acceleration = body.NetForce / body.mass;
+
+            // Change velocity based on acceleration
+            body.velocity += acceleration * dt;
+
+            // Damp Motion
+            body.velocity *= (1.0f - (body.Damping * dt));
+    }   }
+
     public bool CheckCollisionBetweenSphere(PhysicsShapeSphere shapeA, PhysicsShapeSphere shapeB)
     {
         //1. Determine displacement between spheres (difference in position)
@@ -131,29 +146,49 @@ public class PhysicsWorld : MonoBehaviour
         //      bool isColliding = abs(projection) < sphere.radius
         bool isColliding = Mathf.Abs(projection) <= sphere.radius;
         colliding = isColliding;
-        float fgDotNormal = Vector3.Dot(gravity, normal);
+        PhysicsBody SphereBody = sphere.GetComponent<PhysicsBody>();
+
+        float fgDotNormal = Vector3.Dot(GetGravityForce(SphereBody), normal); // is gravity opposing the surface normal?
 
         if (isColliding)
         {
             Vector3 mtv = (sphere.radius - projection) * normal;
             sphere.transform.position += mtv;
-            if (fgDotNormal < 0.0f)
+
+            if (fgDotNormal > 0.0f)
+            { 
+            
+            }
+            else
             {
-                Vector3 FGravityPerp = fgDotNormal * normal;
+                Vector3 FGravityPerp = fgDotNormal * normal * dt;
 
                 Vector3 NormalForce = -FGravityPerp;
 
-                NormalForce.Normalize();
-
                 sphere.GetComponent<PhysicsBody>().AddForce(NormalForce);
 
+                Debug.DrawLine(sphere.transform.position, sphere.transform.position + NormalForce, Color.green);
+
+                float frictionCoefficient = SphereBody.frictionCoefficient;
+
+                // Calculate friction force magnitude from coefficient of friction and normal force magnitude
+                float frictionMagnitudeMax = frictionCoefficient * NormalForce.magnitude;
+
+                // Kinetic friction works to reduce relative velocity
+                Vector3 VelocitySphereRelativeToPlane = SphereBody.velocity - plane.GetComponent<PhysicsBody>().velocity;
+                Vector3 VelocityOutOfPlane = Vector3.Dot(VelocitySphereRelativeToPlane, normal) * normal;
+
+                // Make sure friction Does not apply out of plane
+                Vector3 VelocityInPlane = VelocitySphereRelativeToPlane - VelocityOutOfPlane;
+
+                // Direction opposite of velocity, length of 1
+                Vector3 FrictionDirection = -VelocityInPlane.normalized;
+
+                // Combine magnitude of friction with direction opposing sliding motion
+                Vector3 ForceFriction = frictionCoefficient * FrictionDirection;
+
+                SphereBody.AddForce(ForceFriction);
             }
-            sphere.GetComponent<PhysicsBody>().AddForce(FrictionForce);
-
-
-            //sphere.GetComponent<PhysicsBody>().velocity *= (1.0f - (sphere.GetComponent<PhysicsBody>().friction * dt));
-            //FrictionForce = (sphere.GetComponent<PhysicsBody>().friction * dt) * -1 * (sphere.GetComponent<PhysicsBody>().velocity * dt);
-            //FrictionForce.Normalize();
         }
 
         // Determine forces acting on the object
@@ -193,31 +228,50 @@ public class PhysicsWorld : MonoBehaviour
         bool isColliding = projection <= sphere.radius;
         colliding = isColliding;
 
-        float fgDotNormal = Vector3.Dot(gravity, normal);
+        PhysicsBody SphereBody = sphere.GetComponent<PhysicsBody>();
+
+        float fgDotNormal = Vector3.Dot(GetGravityForce(SphereBody), normal);
 
         if (isColliding) 
         {
             Vector3 mtv = (sphere.radius - projection) * normal;
             sphere.transform.position += mtv;
-            if (fgDotNormal < 0.0f)
-            { 
-                Vector3 FGravityPerp = fgDotNormal * normal;
-            
-                Vector3 NormalForce = -FGravityPerp;
-            
-                NormalForce.Normalize();
-            
-                sphere.GetComponent<PhysicsBody>().AddForce(NormalForce);
+            if (fgDotNormal > 0.0f)
+            {
 
             }
-            
-            
+            else
+            {
+                Vector3 FGravityPerp = fgDotNormal * normal * dt;
 
+                Vector3 NormalForce = -FGravityPerp;
 
-            FrictionForce = (sphere.GetComponent<PhysicsBody>().friction * dt)  * (-1 * sphere.GetComponent<PhysicsBody>().velocity * dt);
-           // FrictionForce.Normalize();
+                sphere.GetComponent<PhysicsBody>().AddForce(NormalForce);
 
-            sphere.GetComponent<PhysicsBody>().AddForce(FrictionForce);
+                Debug.DrawLine(sphere.transform.position, sphere.transform.position + NormalForce, Color.green);
+
+                float frictionCoefficient = SphereBody.frictionCoefficient;
+
+                // Calculate friction force magnitude from coefficient of friction and normal force magnitude
+                float frictionMagnitudeMax = frictionCoefficient * NormalForce.magnitude;
+
+                // Kinetic friction works to reduce relative velocity
+                Vector3 VelocitySphereRelativeToPlane = SphereBody.velocity - halfSpace.GetComponent<PhysicsBody>().velocity;
+                Vector3 VelocityOutOfPlane = Vector3.Dot(VelocitySphereRelativeToPlane, normal) * normal;
+
+                // Make sure friction Does not apply out of plane
+                Vector3 VelocityInPlane = VelocitySphereRelativeToPlane - VelocityOutOfPlane;
+
+                // Direction opposite of velocity, length of 1
+                Vector3 FrictionDirection = -VelocityInPlane.normalized;
+
+                // Combine magnitude of friction with direction opposing sliding motion
+                Vector3 ForceFriction = frictionCoefficient * FrictionDirection;
+
+                SphereBody.AddForce(ForceFriction);
+
+                //TODO: Make sure friction does not cause the sphere to speed up relative to the plane
+            }
 
         }
 
@@ -319,11 +373,17 @@ public class PhysicsWorld : MonoBehaviour
     {
         AddNewBodiesFromScene();
 
-        // Apply kinematics
+        // Set all net forces to 0 -- should do before adding any forces for the frame
+        ResetNetForces();
+
+        // Change position based on veloctiy and time
         ApplyKinematics();
 
-        // Check collisions
+        // Check collisions, apply forces due to collisions
         CheckCollisions();
+
+        // Change net acceleration based on net force.. also adds gravity
+        applyAcceleration();
 
         t += dt;
     }
