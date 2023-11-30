@@ -32,7 +32,7 @@ public class PhysicsWorld : MonoBehaviour
     }
     Vector3 GetGravityForce(PhysicsBody body)
     { 
-        return gravity * body.Mass * body.gravityScale;
+        return gravity * body.mass * body.gravityScale;
     }
 
     private void ResetNetForces()
@@ -54,8 +54,7 @@ public class PhysicsWorld : MonoBehaviour
 
              // Velocity
              Debug.DrawLine(body.transform.position, body.transform.position + body.velocity, Color.red);
-             // Net force
-             Debug.DrawLine(body.transform.position, body.transform.position + body.NetForce, Color.blue, 25.0f, false);
+            
         }
 
     }
@@ -64,17 +63,35 @@ public class PhysicsWorld : MonoBehaviour
     {
         foreach (PhysicsBody body in bodies)
         {
-
             // Gravity
             Vector3 GravityForce = GetGravityForce(body);
             body.AddForce(GravityForce);
-            //Gravity force
-             Debug.DrawLine(body.transform.position, body.transform.position + GravityForce, Color.yellow);
-
+            // Gravity does not scale based on mass
+            // let g = -10
+            // let m = 5
+            // Fg * m * g = -50
+            // a = Fg / m
+            // a = -50 / 5 = -10
+            // Test with m = 1 (will get same a)
+            // Fg = -10 * 1 = -10
+            // a = Fg / m = -10 / 1 = -10
+            // Solve by applying gravitation acceleration directly!
+            // Note that this is physically incorrect because Fg is no longer proportional to mass,
+            // so this will break the moment anything depends on Fg
+            //Vector3 Fg = gravity * body.gravityScale * body.mass;
+            //Vector3 Fn = -Fg;   // TODO -- handle normal force at an angle
+            //Vector3 fNet = Fg + Fn;
 
             // Acceleration
-            Vector3 acceleration = body.NetForce / body.mass;
+            Vector3 acceleration = body.NetForce / body.mass;// / body.mass;
 
+            //Gravity force
+            Debug.DrawLine(body.transform.position, body.transform.position + GetGravityForce(body), Color.yellow);
+
+            // Net force
+            Debug.DrawLine(body.transform.position, body.transform.position + body.NetForce, Color.blue);
+
+            Debug.Log(acceleration);
             // Change velocity based on acceleration
             body.velocity += acceleration * dt;
 
@@ -125,7 +142,7 @@ public class PhysicsWorld : MonoBehaviour
         // Let a sphere be defined by:
         //A postion of the center of the sphere
         //A radius
-        Vector3 FrictionForce = Vector3.zero;
+       
         // Let a plane be defined by:
         // A point anywhere on the plane ( we can use transform.position for this)
         // The orientation of the plane as a quaternion or euler engles (rotation around x, y, and z)
@@ -185,9 +202,11 @@ public class PhysicsWorld : MonoBehaviour
                 Vector3 FrictionDirection = -VelocityInPlane.normalized;
 
                 // Combine magnitude of friction with direction opposing sliding motion
-                Vector3 ForceFriction = frictionCoefficient * FrictionDirection;
+                Vector3 ForceFriction = frictionMagnitudeMax * FrictionDirection;
 
                 SphereBody.AddForce(ForceFriction);
+
+                Debug.DrawLine(sphere.transform.position, sphere.transform.position + ForceFriction, new Color(1.0f, 0.65f, 0.0f));
             }
         }
 
@@ -266,10 +285,11 @@ public class PhysicsWorld : MonoBehaviour
                 Vector3 FrictionDirection = -VelocityInPlane.normalized;
 
                 // Combine magnitude of friction with direction opposing sliding motion
-                Vector3 ForceFriction = frictionCoefficient * FrictionDirection;
+                Vector3 ForceFriction = frictionMagnitudeMax * FrictionDirection;
 
                 SphereBody.AddForce(ForceFriction);
 
+                Debug.DrawLine(sphere.transform.position, sphere.transform.position + ForceFriction, new Color(1.0f, 0.65f, 0.0f));
                 //TODO: Make sure friction does not cause the sphere to speed up relative to the plane
             }
 

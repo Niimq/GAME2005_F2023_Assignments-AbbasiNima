@@ -113,7 +113,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   velocity: {x: 0, y: 0, z: 0}
   gravityScale: 1
-  friction: 1
+  Damping: 0
+  frictionCoefficient: 0.41
   mass: 1
   massInverse: 1
   shape: {fileID: -4091584175772306675}
