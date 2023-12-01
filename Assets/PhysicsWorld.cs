@@ -52,8 +52,6 @@ public class PhysicsWorld : MonoBehaviour
             // Do kinematics
             body.transform.position += body.velocity * dt;
 
-            // Velocity
-            Debug.DrawLine(body.transform.position, body.transform.position + body.velocity, Color.red);
         }
 
     }
@@ -67,16 +65,17 @@ public class PhysicsWorld : MonoBehaviour
             body.AddForce(GravityForce);
 
             // Acceleration
-            Vector3 acceleration = body.NetForce / body.mass;// / body.mass;
+            Vector3 acceleration = body.NetForce / body.Mass;
 
             //Gravity force
             Debug.DrawLine(body.transform.position, body.transform.position + GetGravityForce(body), new Color(0.5f, 0.0f, 0.5f));
 
             // Change velocity based on acceleration
-          //  body.velocity += acceleration * dt;
+            body.velocity += acceleration * dt;
 
             // Damp Motion
             body.velocity *= (1.0f - (body.Damping * dt));
+
         }
     }
 
@@ -209,7 +208,7 @@ public class PhysicsWorld : MonoBehaviour
 
                 // Direction opposite of velocity, length of 1
                 Vector3 FrictionDirection = -VelocityInPlane;
-
+                FrictionDirection = FrictionDirection * halfSpace.GetComponent<PhysicsBody>().frictionCoeffient;
                 SphereBody.AddForce(FrictionDirection);
 
                 Debug.DrawLine(sphere.transform.position, sphere.transform.position + FrictionDirection, new Color(1.0f, 0.65f, 0.0f));

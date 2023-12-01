@@ -7,6 +7,7 @@ public class PhysicsBody : MonoBehaviour
     public Vector3 velocity = Vector3.zero;
     public float gravityScale = 1.0f;
     public float Damping = 1.0f;
+    public float frictionCoeffient = 0.0f;
 
     private Vector3 netForce;
 
