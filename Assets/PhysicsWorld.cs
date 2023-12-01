@@ -30,6 +30,18 @@ public class PhysicsWorld : MonoBehaviour
             }
         }
     }
+    Vector3 GetGravityForce(PhysicsBody body)
+    {
+        return gravity * body.mass * body.gravityScale;
+    }
+
+    private void ResetNetForces()
+    {
+        foreach (PhysicsBody body in bodies)
+        {
+            body.ResetForces();
+        }
+    }
 
     private void ApplyKinematics()
     {
@@ -37,17 +49,37 @@ public class PhysicsWorld : MonoBehaviour
         //Do gravity
         foreach (PhysicsBody body in bodies)
         {
-            // Apply acceleration due to gravity
-            body.velocity += gravity * body.gravityScale * dt;
-
-            // Damp Motion
-            body.velocity *= (1.0f - (body.friction * dt));
-
             // Do kinematics
             body.transform.position += body.velocity * dt;
+
+            // Velocity
+            Debug.DrawLine(body.transform.position, body.transform.position + body.velocity, Color.red);
         }
 
     }
+
+    private void applyAcceleration()
+    {
+        foreach (PhysicsBody body in bodies)
+        {
+            // Gravity
+            Vector3 GravityForce = GetGravityForce(body);
+            body.AddForce(GravityForce);
+
+            // Acceleration
+            Vector3 acceleration = body.NetForce / body.mass;// / body.mass;
+
+            //Gravity force
+            Debug.DrawLine(body.transform.position, body.transform.position + GetGravityForce(body), new Color(0.5f, 0.0f, 0.5f));
+
+            // Change velocity based on acceleration
+            body.velocity += acceleration * dt;
+
+            // Damp Motion
+            body.velocity *= (1.0f - (body.Damping * dt));
+        }
+    }
+
     public bool CheckCollisionBetweenSphere(PhysicsShapeSphere shapeA, PhysicsShapeSphere shapeB)
     {
         //1. Determine displacement between spheres (difference in position)
@@ -59,7 +91,7 @@ public class PhysicsWorld : MonoBehaviour
         if (distance < shapeA.radius + shapeB.radius)
         {
 
-            ////displacements.Normalize();
+            /*///displacements.Normalize();
             //Vector3 v1 = shapeA.GetComponent<PhysicsBody>().velocity;
             //float X1 = Vector3.Dot(displacements, v1);
             //v1.x = displacements.x * X1;
@@ -75,7 +107,7 @@ public class PhysicsWorld : MonoBehaviour
             //shapeB.GetComponent<PhysicsBody>().velocity = v2;
 
             //shapeA.GetComponent<PhysicsBody>().gravityScale = 0;
-            //shapeB.GetComponent<PhysicsBody>().gravityScale = 0;
+            //shapeB.GetComponent<PhysicsBody>().gravityScale = 0;*/
             return true;
         }
         else
@@ -115,7 +147,7 @@ public class PhysicsWorld : MonoBehaviour
         {
             sphere.GetComponent<PhysicsBody>().gravityScale = 0;
             sphere.transform.position += (sphere.radius - projection + 0.01f) * normal;
-            sphere.GetComponent<PhysicsBody>().velocity *= (1.0f - (sphere.GetComponent<PhysicsBody>().friction * dt));
+            sphere.GetComponent<PhysicsBody>().velocity *= (1.0f - (sphere.GetComponent<PhysicsBody>().Damping * dt));
         }
 
         return isColliding;
@@ -151,10 +183,23 @@ public class PhysicsWorld : MonoBehaviour
         //      bool isColliding = projection < sphere.radius
         bool isColliding = projection <= sphere.radius;
         colliding = isColliding;
+        PhysicsBody SphereBody = sphere.GetComponent<PhysicsBody>();
+
+        float fgDotNormal = Vector3.Dot(GetGravityForce(SphereBody), normal); // is gravity opposing the surface normal?
         if (isColliding) 
         {
-            sphere.transform.position += normal * (sphere.radius - projection + 0.01f);
-            sphere.GetComponent<PhysicsBody>().velocity *= (1.0f - (sphere.GetComponent<PhysicsBody>().friction * dt));
+            Vector3 mtv = (sphere.radius - projection) * normal;
+            sphere.transform.position += mtv;
+            if (fgDotNormal < 0.0f)
+            {
+                Vector3 FGravityPerp = fgDotNormal * normal * dt;
+
+                Vector3 NormalForce = -FGravityPerp;
+
+                sphere.GetComponent<PhysicsBody>().AddForce(NormalForce);
+
+                Debug.DrawLine(sphere.transform.position, sphere.transform.position + NormalForce, Color.green);
+            }
         }
 
         return isColliding;
