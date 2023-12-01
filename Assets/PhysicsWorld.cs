@@ -73,7 +73,7 @@ public class PhysicsWorld : MonoBehaviour
             Debug.DrawLine(body.transform.position, body.transform.position + GetGravityForce(body), new Color(0.5f, 0.0f, 0.5f));
 
             // Change velocity based on acceleration
-            body.velocity += acceleration * dt;
+          //  body.velocity += acceleration * dt;
 
             // Damp Motion
             body.velocity *= (1.0f - (body.Damping * dt));
@@ -199,6 +199,20 @@ public class PhysicsWorld : MonoBehaviour
                 sphere.GetComponent<PhysicsBody>().AddForce(NormalForce);
 
                 Debug.DrawLine(sphere.transform.position, sphere.transform.position + NormalForce, Color.green);
+
+                // Kinetic friction works to reduce relative velocity
+                Vector3 VelocitySphereRelativeToPlane = SphereBody.velocity - halfSpace.GetComponent<PhysicsBody>().velocity;
+                Vector3 VelocityOutOfPlane = Vector3.Dot(VelocitySphereRelativeToPlane, normal) * normal;
+
+                // Make sure friction Does not apply out of plane
+                Vector3 VelocityInPlane = VelocitySphereRelativeToPlane - VelocityOutOfPlane;
+
+                // Direction opposite of velocity, length of 1
+                Vector3 FrictionDirection = -VelocityInPlane;
+
+                SphereBody.AddForce(FrictionDirection);
+
+                Debug.DrawLine(sphere.transform.position, sphere.transform.position + FrictionDirection, new Color(1.0f, 0.65f, 0.0f));
             }
         }
 
@@ -300,11 +314,17 @@ public class PhysicsWorld : MonoBehaviour
     {
         AddNewBodiesFromScene();
 
+        // Set all net forces to 0 -- should do before adding any forces for the frame
+        ResetNetForces();
+
         // Apply kinematics
         ApplyKinematics();
 
         // Check collisions
         CheckCollisions();
+
+        // Change net acceleration based on net force.. also adds gravity
+        applyAcceleration();
 
         t += dt;
     }
