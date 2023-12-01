@@ -86,12 +86,12 @@ public class PhysicsWorld : MonoBehaviour
             Vector3 acceleration = body.NetForce / body.mass;// / body.mass;
 
             //Gravity force
-            Debug.DrawLine(body.transform.position, body.transform.position + GetGravityForce(body), Color.yellow);
+            Debug.DrawLine(body.transform.position, body.transform.position + GetGravityForce(body), new Color(0.5f, 0.0f, 0.5f));
 
             // Net force
-            Debug.DrawLine(body.transform.position, body.transform.position + body.NetForce, Color.blue);
+            // Debug.DrawLine(body.transform.position, body.transform.position + body.NetForce, Color.blue);
 
-            Debug.Log(acceleration);
+            //Debug.Log(acceleration);
             // Change velocity based on acceleration
             body.velocity += acceleration * dt;
 
@@ -109,22 +109,24 @@ public class PhysicsWorld : MonoBehaviour
         //3. If the distance is less than the sum of the radiii, then overlapping.
         if (distance < shapeA.radius + shapeB.radius)
         {
-            /*displacements.Normalize();
-            
-            Vector3 v1 = shapeA.GetComponent<PhysicsBody>().velocity;
-            float X1 = Vector3.Dot(displacements, v1);
-            v1.x = displacements.x * X1;
-            v1.y = displacements.y * X1;
+            //Vector3 collisionNormal = displacements;
 
-            Vector3 displacement2 = displacements * -1;
-            Vector3 v2 = shapeB.GetComponent<PhysicsBody>().velocity;
-            float X2 = Vector3.Dot(displacement2, v2);
-            v2.x = displacement2.x * X1;
-            v2.y = displacement2.y - v2.x;
+            //collisionNormal.Normalize();
 
-            shapeA.GetComponent<PhysicsBody>().velocity = v1;
-            shapeB.GetComponent<PhysicsBody>().velocity = v2;
-        */
+            //Vector3 v1 = shapeA.GetComponent<PhysicsBody>().velocity;
+            //float X1 = Vector3.Dot(collisionNormal, v1);
+            //v1.x = collisionNormal.x * X1;
+            //v1.y = collisionNormal.y * X1;
+
+            //Vector3 displacement2 = collisionNormal * -1;
+            //Vector3 v2 = shapeB.GetComponent<PhysicsBody>().velocity;
+            //float X2 = Vector3.Dot(displacement2, v2);
+            //v2.x = displacement2.x * X1;
+            //v2.y = displacement2.y - v2.x;
+
+            //shapeA.GetComponent<PhysicsBody>().velocity = v1;
+            //shapeB.GetComponent<PhysicsBody>().velocity = v2;
+
 
             //shapeA.GetComponent<PhysicsBody>().gravityScale = 0;
             //shapeB.GetComponent<PhysicsBody>().gravityScale = 0;
@@ -356,13 +358,13 @@ public class PhysicsWorld : MonoBehaviour
 
     private void CheckCollisions()
     {
-        if (DebugMode)
-        {
-            for (int i = 0; i < bodies.Count; i++)
-            {
-                bodies[i].GetComponent<Renderer>().material.SetColor("_Color", Color.white);
-            }
-        }
+        //if (DebugMode)
+        //{
+        //    for (int i = 0; i < bodies.Count; i++)
+        //    {
+        //        bodies[i].GetComponent<Renderer>().material.SetColor("_Color", Color.white);
+        //    }
+        //}
 
         for (int i = 0; i < bodies.Count; i++)
         {
@@ -381,8 +383,8 @@ public class PhysicsWorld : MonoBehaviour
                 {
                     if (isColiding) 
                     {
-                        bodyA.GetComponent<Renderer>().material.SetColor("_Color", Color.red);
-                        bodyB.GetComponent<Renderer>().material.SetColor("_Color", Color.red);
+                        //bodyA.GetComponent<Renderer>().material.SetColor("_Color", Color.red);
+                        //bodyB.GetComponent<Renderer>().material.SetColor("_Color", Color.red);
                     }
                 }
             }
