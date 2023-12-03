@@ -132,7 +132,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -5590701914269097730, guid: a29befdf43bd9c5488d0614c712d3fc6, type: 3}
       propertyPath: mass
-      value: 10
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: -5590701914269097730, guid: a29befdf43bd9c5488d0614c712d3fc6, type: 3}
       propertyPath: Damping
@@ -144,7 +144,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -5590701914269097730, guid: a29befdf43bd9c5488d0614c712d3fc6, type: 3}
       propertyPath: frictionCoefficient
-      value: 0.041
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 5342963569940344674, guid: a29befdf43bd9c5488d0614c712d3fc6, type: 3}
       propertyPath: m_Name
@@ -261,8 +261,8 @@ MonoBehaviour:
   velocity: {x: 0, y: 0, z: 0}
   gravityScale: 1
   Damping: 1
-  frictionCoefficient: 0.5
-  mass: 1
+  frictionCoefficient: 0.1
+  mass: 8
   massInverse: 1
   shape: {fileID: 488128212}
 --- !u!135 &488128214
@@ -392,8 +392,8 @@ MonoBehaviour:
   velocity: {x: 0, y: 0, z: 0}
   gravityScale: 1
   Damping: 1
-  frictionCoefficient: 10
-  mass: 1
+  frictionCoefficient: 0.8
+  mass: 2
   massInverse: 1
   shape: {fileID: 493385793}
 --- !u!135 &493385795
@@ -799,8 +799,8 @@ MonoBehaviour:
   velocity: {x: 0, y: 0, z: 0}
   gravityScale: 1
   Damping: 1
-  frictionCoefficient: 10
-  mass: 1
+  frictionCoefficient: 0.8
+  mass: 8
   massInverse: 1
   shape: {fileID: 760601086}
 --- !u!135 &760601088
@@ -957,14 +957,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_LocalRotation: {x: 0.0418534, y: -0, z: -0, w: 0.99912375}
+  m_LocalRotation: {x: 0.041821998, y: 0.038699225, z: -0.0016211155, w: 0.99837404}
   m_LocalPosition: {x: -1, y: 8.2, z: -81.54}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 4.797, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 4.797, y: 4.44, z: 0}
 --- !u!1 &1168492699
 GameObject:
   m_ObjectHideFlags: 0
