@@ -66,21 +66,6 @@ public class PhysicsWorld : MonoBehaviour
             // Gravity
             Vector3 GravityForce = GetGravityForce(body);
             body.AddForce(GravityForce);
-            // Gravity does not scale based on mass
-            // let g = -10
-            // let m = 5
-            // Fg * m * g = -50
-            // a = Fg / m
-            // a = -50 / 5 = -10
-            // Test with m = 1 (will get same a)
-            // Fg = -10 * 1 = -10
-            // a = Fg / m = -10 / 1 = -10
-            // Solve by applying gravitation acceleration directly!
-            // Note that this is physically incorrect because Fg is no longer proportional to mass,
-            // so this will break the moment anything depends on Fg
-            //Vector3 Fg = gravity * body.gravityScale * body.mass;
-            //Vector3 Fn = -Fg;   // TODO -- handle normal force at an angle
-            //Vector3 fNet = Fg + Fn;
 
             // Acceleration
             Vector3 acceleration = body.NetForce / body.mass;// / body.mass;
@@ -88,10 +73,6 @@ public class PhysicsWorld : MonoBehaviour
             //Gravity force
             Debug.DrawLine(body.transform.position, body.transform.position + GetGravityForce(body), new Color(0.5f, 0.0f, 0.5f));
 
-            // Net force
-            // Debug.DrawLine(body.transform.position, body.transform.position + body.NetForce, Color.blue);
-
-            //Debug.Log(acceleration);
             // Change velocity based on acceleration
             body.velocity += acceleration * dt;
 
@@ -101,53 +82,52 @@ public class PhysicsWorld : MonoBehaviour
 
     public bool CheckCollisionBetweenSphere(PhysicsShapeSphere shapeA, PhysicsShapeSphere shapeB)
     {
-        //1. Determine displacement between spheres (difference in position)
-        Vector3 displacements = shapeA.transform.position - shapeB.transform.position;
-        //2. Get distance by taking length of the displacement
-        float distance = displacements.magnitude;
+        Vector3 displacement = shapeB.transform.position - shapeA.transform.position;
+        float distance = displacement.magnitude;
+        float combinedRadii = shapeA.radius + shapeB.radius;
 
-        //3. If the distance is less than the sum of the radiii, then overlapping.
-        if (distance < shapeA.radius + shapeB.radius)
+        if (distance < combinedRadii)
         {
-            //Vector3 collisionNormal = displacements;
+            Vector3 collisionNormal = displacement.normalized;
 
-            //collisionNormal.Normalize();
+            Vector3 relativeVelocity = shapeA.GetComponent<PhysicsBody>().velocity - shapeB.GetComponent<PhysicsBody>().velocity;
+            float relativeSpeed = Vector3.Dot(relativeVelocity, collisionNormal);
 
-            //Vector3 v1 = shapeA.GetComponent<PhysicsBody>().velocity;
-            //float X1 = Vector3.Dot(collisionNormal, v1);
-            //v1.x = collisionNormal.x * X1;
-            //v1.y = collisionNormal.y * X1;
+            // Coefficient of restitution (elasticity)
+            float e = Mathf.Min(shapeA.bounciness, shapeB.bounciness); // Use the minimum bounciness factor
 
-            //Vector3 displacement2 = collisionNormal * -1;
-            //Vector3 v2 = shapeB.GetComponent<PhysicsBody>().velocity;
-            //float X2 = Vector3.Dot(displacement2, v2);
-            //v2.x = displacement2.x * X1;
-            //v2.y = displacement2.y - v2.x;
+            // Impulse calculation
+            float impulse = -(1 + e) * relativeSpeed;
+            impulse /= 1 / shapeA.GetComponent<PhysicsBody>().mass + 1 / shapeB.GetComponent<PhysicsBody>().mass;
 
-            //shapeA.GetComponent<PhysicsBody>().velocity = v1;
-            //shapeB.GetComponent<PhysicsBody>().velocity = v2;
+            // Apply impulse to update velocities
+            shapeA.GetComponent<PhysicsBody>().velocity += impulse * collisionNormal / shapeA.GetComponent<PhysicsBody>().mass;
+            shapeB.GetComponent<PhysicsBody>().velocity -= impulse * collisionNormal / shapeB.GetComponent<PhysicsBody>().mass;
 
+            // Adjust positions if they are overlapping
+            float overlap = combinedRadii - distance;
+            Vector3 correction = collisionNormal * overlap;
+            shapeA.transform.position -= correction;
+            shapeB.transform.position += correction;
 
-            //shapeA.GetComponent<PhysicsBody>().gravityScale = 0;
-            //shapeB.GetComponent<PhysicsBody>().gravityScale = 0;
+            // Check if the spheres have a Galilean Cannon arrangement
+            if (shapeA.CompareTag("Galilean") && shapeB.CompareTag("Galilean"))
+            {
+                // Apply an initial force to the upper cannon ball to make it fall
+                shapeA.GetComponent<PhysicsBody>().velocity += Vector3.up * 2;
+            }
+
             return true;
         }
         else
-        {
+        { 
+
             return false;
-        } 
+        }
     }
+
     public bool CheckCollisionsBetweenSpherePlane(PhysicsShapeSphere sphere, PhysicsShapePlane plane)
     {
-        //?????
-
-        // Let a sphere be defined by:
-        //A postion of the center of the sphere
-        //A radius
-       
-        // Let a plane be defined by:
-        // A point anywhere on the plane ( we can use transform.position for this)
-        // The orientation of the plane as a quaternion or euler engles (rotation around x, y, and z)
 
         //1. Find the normal vector perpendicular to the plane
         //      rotate a basis vector e.g. (0,0,1) by the orientation of the object
@@ -212,7 +192,7 @@ public class PhysicsWorld : MonoBehaviour
             }
         }
 
-        // Determine forces acting on the object
+       
 
 
         return isColliding;
@@ -220,32 +200,14 @@ public class PhysicsWorld : MonoBehaviour
 
     public bool CheckCollisionsBetweenSphereHalfSpace(PhysicsShapeSphere sphere, PhysicsShapeHalfSpace halfSpace)
     {
-        //?????
 
-        // Let a sphere be defined by:
-        //A postion of the center of the sphere
-        //A radius
-        Vector3 FrictionForce = Vector3.zero;
-        // Let a plane be defined by:
-        // A point anywhere on the plane ( we can use transform.position for this)
-        // The orientation of the plane as a quaternion or euler engles (rotation around x, y, and z)
 
-        //1. Find the normal vector perpendicular to the plane
-        //      rotate a basis vector e.g. (0,0,1) by the orientation of the object
-        //Vector3 normal = halfSpace.transform.up;
         Vector3 normal = halfSpace.transform.rotation * new Vector3(0, 1, 0);
-        
 
-        //2. Find the displacement from the point on the plane to the center of the sphere by vector subtraction
-        //      Vec3 displacement = sphere.position - plane.position
         Vector3 displacement = sphere.transform.position - halfSpace.transform.position;
 
-        //3. Find the scalar projection of the displacement vector onto the normal vector using dot product
-        //      float projection = Dot(displacement, plane.normal)
         float projection = Vector3.Dot(displacement, normal);
 
-        //4. For a HALFSPACE, if the projection is less than the sphere radius, they are overlapping
-        //      bool isColliding = projection < sphere.radius
         bool isColliding = projection <= sphere.radius;
         colliding = isColliding;
 
@@ -358,13 +320,13 @@ public class PhysicsWorld : MonoBehaviour
 
     private void CheckCollisions()
     {
-        //if (DebugMode)
-        //{
-        //    for (int i = 0; i < bodies.Count; i++)
-        //    {
-        //        bodies[i].GetComponent<Renderer>().material.SetColor("_Color", Color.white);
-        //    }
-        //}
+        if (DebugMode)
+        {
+            for (int i = 0; i < bodies.Count; i++)
+            {
+               // bodies[i].GetComponent<Renderer>().material.SetColor("_Color", Color.white);
+            }
+        }
 
         for (int i = 0; i < bodies.Count; i++)
         {
@@ -383,8 +345,8 @@ public class PhysicsWorld : MonoBehaviour
                 {
                     if (isColiding) 
                     {
-                        //bodyA.GetComponent<Renderer>().material.SetColor("_Color", Color.red);
-                        //bodyB.GetComponent<Renderer>().material.SetColor("_Color", Color.red);
+                       //bodyA.GetComponent<Renderer>().material.SetColor("_Color", Color.red);
+                       //bodyB.GetComponent<Renderer>().material.SetColor("_Color", Color.red);
                     }
                 }
             }
