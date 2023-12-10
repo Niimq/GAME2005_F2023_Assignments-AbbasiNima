@@ -98,11 +98,11 @@ public class PhysicsWorld : MonoBehaviour
 
             // Coefficient of restitution (elasticity)
             float eA = shapeA.bounciness;
-            float eB = shapeA.bounciness;
+            float eB = shapeB.bounciness;
 
             // Impulse calculation
-            float impulseA = -(1 + eA) * relativeSpeedAB;
-            float impulseB = -(1 + eB) * relativeSpeedBA;
+            float impulseA = relativeSpeedAB * -(eA + 0.2f);
+            float impulseB = relativeSpeedBA * -(eB + 0.2f);
             impulseA /= 1 / shapeA.GetComponent<PhysicsBody>().mass + 1 / shapeB.GetComponent<PhysicsBody>().mass;
             impulseB /= 1 / shapeB.GetComponent<PhysicsBody>().mass + 1 / shapeA.GetComponent<PhysicsBody>().mass;
 
@@ -166,7 +166,7 @@ public class PhysicsWorld : MonoBehaviour
                 sphere.GetComponent<PhysicsBody>().AddForce(NormalForce);
 
                 Debug.DrawLine(sphere.transform.position, sphere.transform.position + NormalForce, Color.green);
-
+                
                 float frictionCoefficient = SphereBody.frictionCoefficient;
 
                 // Calculate friction force magnitude from coefficient of friction and normal force magnitude
@@ -190,9 +190,6 @@ public class PhysicsWorld : MonoBehaviour
                 Debug.DrawLine(sphere.transform.position, sphere.transform.position + ForceFriction, new Color(1.0f, 0.65f, 0.0f));
             }
         }
-
-       
-
 
         return isColliding;
     }
@@ -218,6 +215,12 @@ public class PhysicsWorld : MonoBehaviour
         {
             Vector3 mtv = (sphere.radius - projection) * normal;
             sphere.transform.position += mtv;
+
+            // Reflection of the sphere's velocity based on the half-space's normal
+            Vector3 reflection = Vector3.Reflect(SphereBody.velocity, normal);
+            // Apply coefficient of restitution to their reflection so each ball would bounce with a different height
+            SphereBody.velocity = (0.6f * sphere.bounciness) * reflection;
+
             if (fgDotNormal > 0.0f)
             {
 
@@ -253,7 +256,6 @@ public class PhysicsWorld : MonoBehaviour
                 SphereBody.AddForce(ForceFriction);
 
                 Debug.DrawLine(sphere.transform.position, sphere.transform.position + ForceFriction, new Color(1.0f, 0.65f, 0.0f));
-                //TODO: Make sure friction does not cause the sphere to speed up relative to the plane
             }
 
         }

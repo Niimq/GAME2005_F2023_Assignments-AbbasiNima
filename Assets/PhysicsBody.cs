@@ -14,7 +14,7 @@ public class PhysicsBody : MonoBehaviour
     // Physics engines often store inverse of mass for performance reasons
     // (it's faster when attempting to divide by mass to instead multiply by cached inverse)
     public float mass = 1.0f;
-    public float massInverse = 1.0f;
+    public float massInverse;
     public PhysicsShape shape = null;
 
     public float Mass //Property (feature of C# that lets you make variable-like getter and setter)
