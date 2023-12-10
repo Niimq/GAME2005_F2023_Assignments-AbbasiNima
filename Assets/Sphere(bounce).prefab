@@ -115,7 +115,7 @@ MonoBehaviour:
   gravityScale: 1
   Damping: 1
   frictionCoefficient: 0.1
-  mass: 2
+  mass: 10
   massInverse: 1
   shape: {fileID: -4091584175772306675}
 --- !u!114 &-4091584175772306675
@@ -131,3 +131,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   radius: 0.5
+  bounciness: 1

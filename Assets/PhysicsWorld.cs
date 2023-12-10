@@ -90,32 +90,31 @@ public class PhysicsWorld : MonoBehaviour
         {
             Vector3 collisionNormal = displacement.normalized;
 
-            Vector3 relativeVelocity = shapeA.GetComponent<PhysicsBody>().velocity - shapeB.GetComponent<PhysicsBody>().velocity;
-            float relativeSpeed = Vector3.Dot(relativeVelocity, collisionNormal);
+            Vector3 relativeVelocityAB = shapeA.GetComponent<PhysicsBody>().velocity - shapeB.GetComponent<PhysicsBody>().velocity;
+            float relativeSpeedAB = Vector3.Dot(relativeVelocityAB, collisionNormal);
+            
+            Vector3 relativeVelocity = shapeB.GetComponent<PhysicsBody>().velocity - shapeA.GetComponent<PhysicsBody>().velocity;
+            float relativeSpeedBA = Vector3.Dot(relativeVelocity, -1 * collisionNormal);
 
             // Coefficient of restitution (elasticity)
-            float e = Mathf.Min(shapeA.bounciness, shapeB.bounciness); // Use the minimum bounciness factor
+            float eA = shapeA.bounciness;
+            float eB = shapeA.bounciness;
 
             // Impulse calculation
-            float impulse = -(1 + e) * relativeSpeed;
-            impulse /= 1 / shapeA.GetComponent<PhysicsBody>().mass + 1 / shapeB.GetComponent<PhysicsBody>().mass;
+            float impulseA = -(1 + eA) * relativeSpeedAB;
+            float impulseB = -(1 + eB) * relativeSpeedBA;
+            impulseA /= 1 / shapeA.GetComponent<PhysicsBody>().mass + 1 / shapeB.GetComponent<PhysicsBody>().mass;
+            impulseB /= 1 / shapeB.GetComponent<PhysicsBody>().mass + 1 / shapeA.GetComponent<PhysicsBody>().mass;
 
             // Apply impulse to update velocities
-            shapeA.GetComponent<PhysicsBody>().velocity += impulse * collisionNormal / shapeA.GetComponent<PhysicsBody>().mass;
-            shapeB.GetComponent<PhysicsBody>().velocity -= impulse * collisionNormal / shapeB.GetComponent<PhysicsBody>().mass;
+            shapeA.GetComponent<PhysicsBody>().velocity += impulseA * collisionNormal / shapeA.GetComponent<PhysicsBody>().mass;
+            shapeB.GetComponent<PhysicsBody>().velocity -= impulseB * collisionNormal / shapeB.GetComponent<PhysicsBody>().mass;
 
             // Adjust positions if they are overlapping
             float overlap = combinedRadii - distance;
             Vector3 correction = collisionNormal * overlap;
             shapeA.transform.position -= correction;
             shapeB.transform.position += correction;
-
-            // Check if the spheres have a Galilean Cannon arrangement
-            if (shapeA.CompareTag("Galilean") && shapeB.CompareTag("Galilean"))
-            {
-                // Apply an initial force to the upper cannon ball to make it fall
-                shapeA.GetComponent<PhysicsBody>().velocity += Vector3.up * 2;
-            }
 
             return true;
         }
