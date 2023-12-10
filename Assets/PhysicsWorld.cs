@@ -13,6 +13,7 @@ public class PhysicsWorld : MonoBehaviour
     public bool colliding;
     private float WorldElasticity = 0.2f;
 
+
     // Start is called before the first frame update
     void Start()
     {
@@ -262,6 +263,13 @@ public class PhysicsWorld : MonoBehaviour
         }
 
         return isColliding;
+    }
+
+    private void CheckCollisionsBetweenAABBs(Vector3 point)
+    {
+        //Update each component seperately
+        
+        
     }
 
     public bool CheckCollisionBetween(PhysicsBody bodyA, PhysicsBody bodyB)
