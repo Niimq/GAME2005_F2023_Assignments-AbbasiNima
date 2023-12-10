@@ -11,6 +11,7 @@ public class PhysicsWorld : MonoBehaviour
     public List<PhysicsBody> bodies;
     public Vector3 gravity = new Vector3(0f, -9.8f, 0f);
     public bool colliding;
+    private float WorldElasticity = 0.2f;
 
     // Start is called before the first frame update
     void Start()
@@ -101,8 +102,8 @@ public class PhysicsWorld : MonoBehaviour
             float eB = shapeB.bounciness;
 
             // Impulse calculation
-            float impulseA = relativeSpeedAB * -(eA + 0.2f);
-            float impulseB = relativeSpeedBA * -(eB + 0.2f);
+            float impulseA = relativeSpeedAB * -(eA + WorldElasticity);
+            float impulseB = relativeSpeedBA * -(eB + WorldElasticity);
             impulseA /= 1 / shapeA.GetComponent<PhysicsBody>().mass + 1 / shapeB.GetComponent<PhysicsBody>().mass;
             impulseB /= 1 / shapeB.GetComponent<PhysicsBody>().mass + 1 / shapeA.GetComponent<PhysicsBody>().mass;
 
