@@ -6,12 +6,17 @@ using UnityEngine;
 using UnityEngine.SocialPlatforms.GameCenter;
 using UnityEngine.UIElements;
 
-public class PhysicsShapeAABB : MonoBehaviour
+public class PhysicsShapeAABB : PhysicsShape
 {
-    public Vector3 point;
+    public Vector3 point = new Vector3().normalized;
     
     public Vector3 mMax;
     public Vector3 mMin;
+
+    public override Type GetShapeType()
+    {
+        return PhysicsShape.Type.Box;
+    }
 
     // Start is called before the first frame update
     void Start()

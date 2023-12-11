@@ -8,7 +8,8 @@ public abstract class PhysicsShape : MonoBehaviour
     {
         Sphere = 0,
         halfspace,
-        Plane
+        Plane,
+        Box
     }
     public abstract Type GetShapeType();
 }

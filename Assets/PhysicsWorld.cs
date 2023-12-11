@@ -265,11 +265,30 @@ public class PhysicsWorld : MonoBehaviour
         return isColliding;
     }
 
-    private void CheckCollisionsBetweenAABBs(Vector3 point)
+    private bool CheckCollisionsBetweenAABBs(PhysicsShapeAABB BoxA, PhysicsShapeAABB BoxB)
     {
+        bool isColliding = false;
         //Update each component seperately
-        
-        
+        for (int i = 0; i < 20f; i++) 
+        {
+            if (BoxA.mMin.x + i < BoxB.mMin.x &&
+               BoxA.mMin.y + i < BoxB.mMin.y &&
+               BoxA.mMin.z + i < BoxB.mMin.z)
+            {
+                isColliding = false;
+            }
+            else if (BoxA.mMax.x + i < BoxB.mMax.x &&
+               BoxA.mMax.y + i < BoxB.mMax.y &&
+               BoxA.mMax.z + i < BoxB.mMax.z)
+            {
+               isColliding = false;
+            }
+            else 
+            { 
+              isColliding = true;
+            }
+        }
+        return isColliding;
     }
 
     public bool CheckCollisionBetween(PhysicsBody bodyA, PhysicsBody bodyB)
@@ -311,6 +330,11 @@ public class PhysicsWorld : MonoBehaviour
             && ShapeOfB == PhysicsShape.Type.Plane)
         {
             return CheckCollisionsBetweenSpherePlane((PhysicsShapeSphere)bodyA.shape, (PhysicsShapePlane)bodyB.shape);
+        }
+        else if (ShapeOfA == PhysicsShape.Type.Box
+            && ShapeOfB == PhysicsShape.Type.Box)
+        {
+            return CheckCollisionsBetweenAABBs((PhysicsShapeAABB)bodyA.shape, (PhysicsShapeAABB)bodyB.shape);
         }
         else if (ShapeOfA == PhysicsShape.Type.Plane
             && ShapeOfB == PhysicsShape.Type.halfspace)
@@ -375,6 +399,7 @@ public class PhysicsWorld : MonoBehaviour
 
         // Check collisions, apply forces due to collisions
         CheckCollisions();
+        
 
         // Change net acceleration based on net force.. also adds gravity
         applyAcceleration();
