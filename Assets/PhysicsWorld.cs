@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEngine.UIElements.UxmlAttributeDescription;
 
 public class PhysicsWorld : MonoBehaviour
 {
@@ -264,7 +265,10 @@ public class PhysicsWorld : MonoBehaviour
 
         return isColliding;
     }
-
+    private bool CheckCollisionsBetweenHalfSpaceAndAABB(PhysicsShapeHalfSpace halfSpace, PhysicsShapeAABB aabb)
+    {
+        return true;
+    }
     private bool CheckCollisionsBetweenAABBs(PhysicsShapeAABB BoxA, PhysicsShapeAABB BoxB)
     {
         bool isColliding = false;
@@ -331,11 +335,42 @@ public class PhysicsWorld : MonoBehaviour
         {
             return CheckCollisionsBetweenSpherePlane((PhysicsShapeSphere)bodyA.shape, (PhysicsShapePlane)bodyB.shape);
         }
-        /*/else if (ShapeOfA == PhysicsShape.Type.Box
-        //    && ShapeOfB == PhysicsShape.Type.Box)
-        //{
-        //    return CheckCollisionsBetweenAABBs((PhysicsShapeAABB)bodyA.shape, (PhysicsShapeAABB)bodyB.shape);
-        /}*/
+        // Checks for AABBs 
+        else if (ShapeOfA == PhysicsShape.Type.Box
+            && ShapeOfB == PhysicsShape.Type.Box)
+        {
+            return CheckCollisionsBetweenAABBs((PhysicsShapeAABB)bodyA.shape, (PhysicsShapeAABB)bodyB.shape);
+        }
+        else if (ShapeOfA == PhysicsShape.Type.Sphere && ShapeOfB == PhysicsShape.Type.Box)
+        {
+            return false;
+            // return CheckCollisionsBetweenSphereAndBox((PhysicsShapeSphere)bodyA.shape, (PhysicsShapeAABB)bodyB.shape);
+        }
+        else if (ShapeOfA == PhysicsShape.Type.Box && ShapeOfB == PhysicsShape.Type.Sphere)
+        {
+            return false;
+            //return CheckCollisionsBetweenBoxAndSphere((PhysicsShapeAABB)bodyA.shape, (PhysicsShapeSphere)bodyB.shape);
+        }
+        else if (ShapeOfA == PhysicsShape.Type.Box && ShapeOfB == PhysicsShape.Type.halfspace)
+        {
+           
+            return CheckCollisionsBetweenHalfSpaceAndAABB((PhysicsShapeHalfSpace)bodyB.shape, (PhysicsShapeAABB)bodyA.shape);
+        }
+        else if (ShapeOfA == PhysicsShape.Type.halfspace && ShapeOfB == PhysicsShape.Type.Box)
+        {
+           
+            return CheckCollisionsBetweenHalfSpaceAndAABB((PhysicsShapeHalfSpace)bodyA.shape, (PhysicsShapeAABB)bodyB.shape);
+        }
+        else if (ShapeOfA == PhysicsShape.Type.Box && ShapeOfB == PhysicsShape.Type.Plane)
+        {
+            return false;
+           // return CheckCollisionsBetweenBoxAndPlane((PhysicsShapeAABB)bodyA.shape, (PhysicsShapePlane)bodyB.shape);
+        }
+        else if (ShapeOfA == PhysicsShape.Type.Plane && ShapeOfB == PhysicsShape.Type.Box)
+        {
+            return false;
+          //  return CheckCollisionsBetweenBoxAndPlane((PhysicsShapeAABB)bodyB.shape, (PhysicsShapePlane)bodyA.shape);
+        }
         else if (ShapeOfA == PhysicsShape.Type.Plane
             && ShapeOfB == PhysicsShape.Type.halfspace)
         { return false; }
