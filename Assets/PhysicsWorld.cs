@@ -331,11 +331,11 @@ public class PhysicsWorld : MonoBehaviour
         {
             return CheckCollisionsBetweenSpherePlane((PhysicsShapeSphere)bodyA.shape, (PhysicsShapePlane)bodyB.shape);
         }
-        else if (ShapeOfA == PhysicsShape.Type.Box
-            && ShapeOfB == PhysicsShape.Type.Box)
-        {
-            return CheckCollisionsBetweenAABBs((PhysicsShapeAABB)bodyA.shape, (PhysicsShapeAABB)bodyB.shape);
-        }
+        /*/else if (ShapeOfA == PhysicsShape.Type.Box
+        //    && ShapeOfB == PhysicsShape.Type.Box)
+        //{
+        //    return CheckCollisionsBetweenAABBs((PhysicsShapeAABB)bodyA.shape, (PhysicsShapeAABB)bodyB.shape);
+        /}*/
         else if (ShapeOfA == PhysicsShape.Type.Plane
             && ShapeOfB == PhysicsShape.Type.halfspace)
         { return false; }
@@ -400,7 +400,6 @@ public class PhysicsWorld : MonoBehaviour
         // Check collisions, apply forces due to collisions
         CheckCollisions();
         
-
         // Change net acceleration based on net force.. also adds gravity
         applyAcceleration();
 
