@@ -8,10 +8,16 @@ using UnityEngine.UIElements;
 
 public class PhysicsShapeAABB : PhysicsShape
 {
-    public Vector3 point = new Vector3().normalized;
+    public Vector3 centerpoint = new Vector3().normalized;
     
-    public Vector3 mMax;
+    
     public Vector3 mMin;
+    public Vector3 mMax;
+    
+    public float x = 0.0f;
+    public float y = 0.0f;
+    public float z = 0.0f;
+   
 
     public override Type GetShapeType()
     {
@@ -23,22 +29,28 @@ public class PhysicsShapeAABB : PhysicsShape
     {
         
     }
+    private void updateMinMax()
+    {
+        mMin.x = centerpoint.x - x;
+        mMin.y = centerpoint.y - y;
+        mMin.z = centerpoint.z - z;
 
+        mMax.x = centerpoint.x + x;
+        mMax.y = centerpoint.y + y;
+        mMax.z = centerpoint.z + z;
+    }
     void UpdateMinMax(Vector3 point)
     {
-       
-        // Update each component seperately
-        mMax.x = Mathf.Max(mMax.x, point.x);
-        mMax.y = Mathf.Max(mMax.y, point.y);
-        mMax.z = Mathf.Max(mMax.z, point.z);
 
-        mMin.x = Mathf.Min(mMin.x, point.x);
-        mMin.y = Mathf.Min(mMin.y, point.y);
-        mMin.z = Mathf.Min(mMin.z, point.z);
+        centerpoint.x = point.x;
+        centerpoint.y = point.y;
+        centerpoint.z = point.z;
     }
 
     // Update is called once per frame
     void Update()
     {
+       UpdateMinMax(transform.position);
+        updateMinMax();
     }
 }

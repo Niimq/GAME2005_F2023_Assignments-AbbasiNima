@@ -200,7 +200,6 @@ public class PhysicsWorld : MonoBehaviour
     public bool CheckCollisionsBetweenSphereHalfSpace(PhysicsShapeSphere sphere, PhysicsShapeHalfSpace halfSpace)
     {
 
-
         Vector3 normal = halfSpace.transform.rotation * new Vector3(0, 1, 0);
 
         Vector3 displacement = sphere.transform.position - halfSpace.transform.position;
@@ -265,34 +264,92 @@ public class PhysicsWorld : MonoBehaviour
 
         return isColliding;
     }
+    
     private bool CheckCollisionsBetweenHalfSpaceAndAABB(PhysicsShapeHalfSpace halfSpace, PhysicsShapeAABB aabb)
     {
-        return true;
+        // Calculate the center of the AABB
+        Vector3 AABBCenter = (aabb.mMin + aabb.mMax) * 0.5f;
+        Vector3 normal = halfSpace.transform.rotation * new Vector3(0, 1, 0);
+
+        float fgDotNormal = Vector3.Dot(GetGravityForce(aabb.GetComponent<PhysicsBody>()), normal);
+        // Calculate the distance from the AABB's center to the plane
+        float distance = Vector3.Dot(normal, AABBCenter);
+
+        // Calculate the projected extent of the AABB onto the plane normal
+        float projectedExtent =
+            Mathf.Abs(normal.x * (aabb.mMax.x - aabb.mMin.x) * 0.5f) +
+            Mathf.Abs(normal.y * (aabb.mMax.y - aabb.mMin.y) * 0.5f) +
+            Mathf.Abs(normal.z * (aabb.mMax.z - aabb.mMin.z) * 0.5f);
+      
+        // Check for overlap
+        if (distance < -projectedExtent)
+        {
+            // Entire AABB is on the side opposite to the normal of the half-space
+            Debug.Log("No Collision");
+            return false;
+        }
+        else if (distance == projectedExtent)
+        {
+            // Entire AABB is on the same side as the normal of the half-space
+            Debug.Log("Collidedwithplane");
+            Vector3 FGravityPerp = fgDotNormal * normal * dt;
+
+            Vector3 NormalForce = -FGravityPerp;
+
+           
+            aabb.GetComponent<PhysicsBody>().AddForce(NormalForce);
+            return true;
+        }
+        else
+        {
+            // AABB is intersecting the plane
+            return true;
+        }
     }
     private bool CheckCollisionsBetweenAABBs(PhysicsShapeAABB BoxA, PhysicsShapeAABB BoxB)
     {
-        bool isColliding = false;
-        //Update each component seperately
-        for (int i = 0; i < 20f; i++) 
+        // Check for overlap along each axis
+        bool overlapX = (BoxA.mMax.x > BoxB.mMin.x && BoxA.mMin.x < BoxB.mMax.x);
+        bool overlapY = (BoxA.mMax.y > BoxB.mMin.y && BoxA.mMin.y < BoxB.mMax.y);
+        bool overlapZ = (BoxA.mMax.z > BoxB.mMin.z && BoxA.mMin.z < BoxB.mMax.z);
+
+        // Check if there is overlap along all axes
+        if (overlapX && overlapY && overlapZ)
         {
-            if (BoxA.mMin.x + i < BoxB.mMin.x &&
-               BoxA.mMin.y + i < BoxB.mMin.y &&
-               BoxA.mMin.z + i < BoxB.mMin.z)
+            Debug.Log("Collided");
+
+            // Calculate the penetration depth along each axis
+            float penetrationX = Mathf.Min(BoxA.mMax.x - BoxB.mMin.x, BoxB.mMax.x - BoxA.mMin.x);
+            float penetrationY = Mathf.Min(BoxA.mMax.y - BoxB.mMin.y, BoxB.mMax.y - BoxA.mMin.y);
+            float penetrationZ = Mathf.Min(BoxA.mMax.z - BoxB.mMin.z, BoxB.mMax.z - BoxA.mMin.z);
+
+            // Determine the axis with the smallest penetration depth
+            if (penetrationX <= penetrationY && penetrationX <= penetrationZ)
             {
-                isColliding = false;
+                // Resolve along the X-axis
+                float direction = Mathf.Sign(BoxB.transform.position.x - BoxA.transform.position.x);
+                float overlap = penetrationX * direction;
+                BoxB.transform.position += new Vector3(overlap, 0, 0);
             }
-            else if (BoxA.mMax.x + i < BoxB.mMax.x &&
-               BoxA.mMax.y + i < BoxB.mMax.y &&
-               BoxA.mMax.z + i < BoxB.mMax.z)
+            else if (penetrationY <= penetrationX && penetrationY <= penetrationZ)
             {
-               isColliding = false;
+                // Resolve along the Y-axis
+                float direction = Mathf.Sign(BoxB.transform.position.y - BoxA.transform.position.y);
+                float overlap = penetrationY * direction;
+                BoxB.transform.position += new Vector3(0, overlap, 0);
             }
-            else 
-            { 
-              isColliding = true;
+            else
+            {
+                // Resolve along the Z-axis
+                float direction = Mathf.Sign(BoxB.transform.position.z - BoxA.transform.position.z);
+                float overlap = penetrationZ * direction;
+                BoxB.transform.position += new Vector3(0, 0, overlap);
             }
+
+            return true; // Collision resolved
         }
-        return isColliding;
+
+        return false; // No collision
     }
 
     public bool CheckCollisionBetween(PhysicsBody bodyA, PhysicsBody bodyB)
