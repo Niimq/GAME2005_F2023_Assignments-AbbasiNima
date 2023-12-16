@@ -83,6 +83,8 @@ public class PhysicsWorld : MonoBehaviour
 
     public bool CheckCollisionBetweenSphere(PhysicsShapeSphere shapeA, PhysicsShapeSphere shapeB)
     {
+        shapeA.UpdateBounciness();
+        shapeB.UpdateBounciness();
         Vector3 displacement = shapeB.transform.position - shapeA.transform.position;
         float distance = displacement.magnitude;
         float combinedRadii = shapeA.radius + shapeB.radius;
@@ -98,8 +100,8 @@ public class PhysicsWorld : MonoBehaviour
             float relativeSpeedBA = Vector3.Dot(relativeVelocity, -1 * collisionNormal);
 
             // Coefficient of restitution (elasticity)
-            float eA = shapeA.bounciness;
-            float eB = shapeB.bounciness;
+            float eA = shapeA.Bounciness;
+            float eB = shapeB.Bounciness;
 
             // Impulse calculation
             float impulseA = relativeSpeedAB * -(eA + WorldElasticity);
@@ -220,7 +222,7 @@ public class PhysicsWorld : MonoBehaviour
             // Reflection of the sphere's velocity based on the half-space's normal
             Vector3 reflection = Vector3.Reflect(SphereBody.velocity, normal);
             // Apply coefficient of restitution to their reflection so each ball would bounce with a different height
-            SphereBody.velocity = (0.6f * sphere.bounciness) * reflection;
+            SphereBody.velocity = (halfSpace.Bounciness * sphere.Bounciness) * reflection;
 
             if (fgDotNormal > 0.0f)
             {
@@ -228,6 +230,8 @@ public class PhysicsWorld : MonoBehaviour
             }
             else
             {
+                sphere.UpdateBounciness();
+                halfSpace.UpdateBounciness();
                 Vector3 FGravityPerp = fgDotNormal * normal * dt;
 
                 Vector3 NormalForce = -FGravityPerp;

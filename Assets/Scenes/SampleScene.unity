@@ -150,6 +150,10 @@ PrefabInstance:
       propertyPath: bounciness
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: -4091584175772306675, guid: a29befdf43bd9c5488d0614c712d3fc6, type: 3}
+      propertyPath: materialType
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 5342963569940344674, guid: a29befdf43bd9c5488d0614c712d3fc6, type: 3}
       propertyPath: m_Name
       value: Sphere(bounce)
@@ -268,6 +272,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e936cc32a052322409f241e9e866398c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  materialType: 5
+  Bounciness: 0
 --- !u!64 &116686380
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -380,8 +386,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 781ce1a32cfd3df478f3f80938f39673, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  materialType: 2
+  Bounciness: 0
   radius: 0.5
-  bounciness: 1
 --- !u!114 &488128213
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -512,8 +519,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 781ce1a32cfd3df478f3f80938f39673, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  materialType: 3
+  Bounciness: 0
   radius: 0.5
-  bounciness: 1.8
 --- !u!114 &493385794
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -663,6 +671,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e936cc32a052322409f241e9e866398c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  materialType: 5
+  Bounciness: 0
 --- !u!64 &542881529
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -1016,6 +1026,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e936cc32a052322409f241e9e866398c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  materialType: 2
+  Bounciness: 0
 --- !u!64 &722985457
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -1128,8 +1140,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 781ce1a32cfd3df478f3f80938f39673, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  materialType: 2
+  Bounciness: 0
   radius: 0.5
-  bounciness: 0.5
 --- !u!114 &760601087
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1486,6 +1499,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e936cc32a052322409f241e9e866398c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  materialType: 5
+  Bounciness: 0
 --- !u!64 &1870589286
 MeshCollider:
   m_ObjectHideFlags: 0
