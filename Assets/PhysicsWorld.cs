@@ -284,13 +284,13 @@ public class PhysicsWorld : MonoBehaviour
         // Check for overlap
         if (distance < -projectedExtent)
         {
-            // Entire AABB is on the side opposite to the normal of the half-space
+            // AABB is on the opposite side compared to normal of the half-space
             Debug.Log("No Collision");
             return false;
         }
         else if (distance == projectedExtent)
         {
-            // Entire AABB is on the same side as the normal of the half-space
+            // when distance is same AABB collision gets detected
             Debug.Log("Collidedwithplane");
             Vector3 FGravityPerp = fgDotNormal * normal * dt;
 
@@ -326,23 +326,44 @@ public class PhysicsWorld : MonoBehaviour
             // Determine the axis with the smallest penetration depth
             if (penetrationX <= penetrationY && penetrationX <= penetrationZ)
             {
-                // Resolve along the X-axis
-                float direction = Mathf.Sign(BoxB.transform.position.x - BoxA.transform.position.x);
-                float overlap = penetrationX * direction;
+                // X-axis
+                float overlap;
+                if (BoxB.transform.position.x - BoxA.transform.position.x < 0)
+                {
+                    overlap = penetrationX * -1;
+                }
+                else
+                {
+                    overlap = penetrationX * 1;
+                } 
                 BoxB.transform.position += new Vector3(overlap, 0, 0);
             }
             else if (penetrationY <= penetrationX && penetrationY <= penetrationZ)
             {
-                // Resolve along the Y-axis
-                float direction = Mathf.Sign(BoxB.transform.position.y - BoxA.transform.position.y);
-                float overlap = penetrationY * direction;
+                //Y-axis
+                float overlap;
+                if (BoxB.transform.position.y - BoxA.transform.position.y < 0)
+                {
+                    overlap = penetrationX * -1;
+                }
+                else
+                {
+                    overlap = penetrationX * 1;
+                }
                 BoxB.transform.position += new Vector3(0, overlap, 0);
             }
             else
             {
-                // Resolve along the Z-axis
-                float direction = Mathf.Sign(BoxB.transform.position.z - BoxA.transform.position.z);
-                float overlap = penetrationZ * direction;
+                //Z-axis
+                float overlap;
+                if (BoxB.transform.position.z - BoxA.transform.position.z < 0)
+                {
+                    overlap = penetrationX * -1;
+                }
+                else
+                {
+                    overlap = penetrationX * 1;
+                }
                 BoxB.transform.position += new Vector3(0, 0, overlap);
             }
 
@@ -352,96 +373,100 @@ public class PhysicsWorld : MonoBehaviour
         return false; // No collision
     }
 
+
+
+
+
     public bool CheckCollisionBetween(PhysicsBody bodyA, PhysicsBody bodyB)
     {
-        PhysicsShape.Type ShapeOfA = bodyA.shape.GetShapeType();
-        PhysicsShape.Type ShapeOfB = bodyB.shape.GetShapeType();
+         PhysicsShape.Type ShapeOfA = bodyA.shape.GetShapeType();
+         PhysicsShape.Type ShapeOfB = bodyB.shape.GetShapeType();
 
 
 
-        if (bodyA.shape == null || bodyB.shape == null) return false;
-        else if (ShapeOfA == PhysicsShape.Type.Sphere
-            && ShapeOfB == PhysicsShape.Type.Sphere)
-        {
-            return CheckCollisionBetweenSphere((PhysicsShapeSphere)bodyA.shape, (PhysicsShapeSphere)bodyB.shape);
-        }
-        else if (ShapeOfA == PhysicsShape.Type.Sphere
-            && ShapeOfB == PhysicsShape.Type.halfspace)
-        {
-            return CheckCollisionsBetweenSphereHalfSpace((PhysicsShapeSphere)bodyA.shape, (PhysicsShapeHalfSpace)bodyB.shape);
-        }
-        // Half-Space collision with sphere and itself
-        else if (ShapeOfA == PhysicsShape.Type.halfspace
-            && ShapeOfB == PhysicsShape.Type.Sphere)
-        {
-            return CheckCollisionsBetweenSphereHalfSpace((PhysicsShapeSphere)bodyB.shape, (PhysicsShapeHalfSpace)bodyA.shape);
-        }
-        else if (ShapeOfA == PhysicsShape.Type.halfspace
-            && ShapeOfB == PhysicsShape.Type.halfspace)
-        {
-            return false;
-        }
-        // Plane collision with it self and also halfspace
-        else if (ShapeOfA == PhysicsShape.Type.Plane
-            && ShapeOfB == PhysicsShape.Type.Sphere)
-        { 
-            return CheckCollisionsBetweenSpherePlane((PhysicsShapeSphere)bodyB.shape, (PhysicsShapePlane)bodyA.shape);
-        }
-        else if (ShapeOfA == PhysicsShape.Type.Sphere
-            && ShapeOfB == PhysicsShape.Type.Plane)
-        {
-            return CheckCollisionsBetweenSpherePlane((PhysicsShapeSphere)bodyA.shape, (PhysicsShapePlane)bodyB.shape);
-        }
-        // Checks for AABBs 
-        else if (ShapeOfA == PhysicsShape.Type.Box
-            && ShapeOfB == PhysicsShape.Type.Box)
-        {
-            return CheckCollisionsBetweenAABBs((PhysicsShapeAABB)bodyA.shape, (PhysicsShapeAABB)bodyB.shape);
-        }
-        else if (ShapeOfA == PhysicsShape.Type.Sphere && ShapeOfB == PhysicsShape.Type.Box)
-        {
-            return false;
-            // return CheckCollisionsBetweenSphereAndBox((PhysicsShapeSphere)bodyA.shape, (PhysicsShapeAABB)bodyB.shape);
-        }
-        else if (ShapeOfA == PhysicsShape.Type.Box && ShapeOfB == PhysicsShape.Type.Sphere)
-        {
-            return false;
-            //return CheckCollisionsBetweenBoxAndSphere((PhysicsShapeAABB)bodyA.shape, (PhysicsShapeSphere)bodyB.shape);
-        }
-        else if (ShapeOfA == PhysicsShape.Type.Box && ShapeOfB == PhysicsShape.Type.halfspace)
-        {
+         if (bodyA.shape == null || bodyB.shape == null) return false;
+         else if (ShapeOfA == PhysicsShape.Type.Sphere
+             && ShapeOfB == PhysicsShape.Type.Sphere)
+         {
+             return CheckCollisionBetweenSphere((PhysicsShapeSphere)bodyA.shape, (PhysicsShapeSphere)bodyB.shape);
+         }
+         else if (ShapeOfA == PhysicsShape.Type.Sphere
+             && ShapeOfB == PhysicsShape.Type.halfspace)
+         {
+             return CheckCollisionsBetweenSphereHalfSpace((PhysicsShapeSphere)bodyA.shape, (PhysicsShapeHalfSpace)bodyB.shape);
+         }
+         // Half-Space collision with sphere and itself
+         else if (ShapeOfA == PhysicsShape.Type.halfspace
+             && ShapeOfB == PhysicsShape.Type.Sphere)
+         {
+             return CheckCollisionsBetweenSphereHalfSpace((PhysicsShapeSphere)bodyB.shape, (PhysicsShapeHalfSpace)bodyA.shape);
+         }
+         else if (ShapeOfA == PhysicsShape.Type.halfspace
+             && ShapeOfB == PhysicsShape.Type.halfspace)
+         {
+             return false;
+         }
+         // Plane collision with it self and also halfspace
+         else if (ShapeOfA == PhysicsShape.Type.Plane
+             && ShapeOfB == PhysicsShape.Type.Sphere)
+         { 
+             return CheckCollisionsBetweenSpherePlane((PhysicsShapeSphere)bodyB.shape, (PhysicsShapePlane)bodyA.shape);
+         }
+         else if (ShapeOfA == PhysicsShape.Type.Sphere
+             && ShapeOfB == PhysicsShape.Type.Plane)
+         {
+             return CheckCollisionsBetweenSpherePlane((PhysicsShapeSphere)bodyA.shape, (PhysicsShapePlane)bodyB.shape);
+         }
+         // Checks for AABBs 
+         else if (ShapeOfA == PhysicsShape.Type.Box
+             && ShapeOfB == PhysicsShape.Type.Box)
+         {
+             return CheckCollisionsBetweenAABBs((PhysicsShapeAABB)bodyA.shape, (PhysicsShapeAABB)bodyB.shape);
+         }
+         else if (ShapeOfA == PhysicsShape.Type.Sphere && ShapeOfB == PhysicsShape.Type.Box)
+         {
+             return false;
+             
+         }
+         else if (ShapeOfA == PhysicsShape.Type.Box && ShapeOfB == PhysicsShape.Type.Sphere)
+         {
+             return false;
+             
+         }
+         else if (ShapeOfA == PhysicsShape.Type.Box && ShapeOfB == PhysicsShape.Type.halfspace)
+         {
+            
+             return CheckCollisionsBetweenHalfSpaceAndAABB((PhysicsShapeHalfSpace)bodyB.shape, (PhysicsShapeAABB)bodyA.shape);
+         }
+         else if (ShapeOfA == PhysicsShape.Type.halfspace && ShapeOfB == PhysicsShape.Type.Box)
+         {
+            
+             return CheckCollisionsBetweenHalfSpaceAndAABB((PhysicsShapeHalfSpace)bodyA.shape, (PhysicsShapeAABB)bodyB.shape);
+         }
+         else if (ShapeOfA == PhysicsShape.Type.Box && ShapeOfB == PhysicsShape.Type.Plane)
+         {
+             return false;
            
-            return CheckCollisionsBetweenHalfSpaceAndAABB((PhysicsShapeHalfSpace)bodyB.shape, (PhysicsShapeAABB)bodyA.shape);
-        }
-        else if (ShapeOfA == PhysicsShape.Type.halfspace && ShapeOfB == PhysicsShape.Type.Box)
-        {
+         }
+         else if (ShapeOfA == PhysicsShape.Type.Plane && ShapeOfB == PhysicsShape.Type.Box)
+         {
+             return false;
            
-            return CheckCollisionsBetweenHalfSpaceAndAABB((PhysicsShapeHalfSpace)bodyA.shape, (PhysicsShapeAABB)bodyB.shape);
-        }
-        else if (ShapeOfA == PhysicsShape.Type.Box && ShapeOfB == PhysicsShape.Type.Plane)
-        {
-            return false;
-           // return CheckCollisionsBetweenBoxAndPlane((PhysicsShapeAABB)bodyA.shape, (PhysicsShapePlane)bodyB.shape);
-        }
-        else if (ShapeOfA == PhysicsShape.Type.Plane && ShapeOfB == PhysicsShape.Type.Box)
-        {
-            return false;
-          //  return CheckCollisionsBetweenBoxAndPlane((PhysicsShapeAABB)bodyB.shape, (PhysicsShapePlane)bodyA.shape);
-        }
-        else if (ShapeOfA == PhysicsShape.Type.Plane
-            && ShapeOfB == PhysicsShape.Type.halfspace)
-        { return false; }
-        else if (ShapeOfA == PhysicsShape.Type.halfspace
-            && ShapeOfB == PhysicsShape.Type.Plane)
-        { return false; }
-        else if (ShapeOfA == PhysicsShape.Type.Plane
-            && ShapeOfB == PhysicsShape.Type.Plane)
-        { return false; }
-        else
-        {
-            throw new System.Exception("UnKnow Shape Type!"); // throwing an exception to know if we did not implement the new shape's collision
-        }
-        
+         }
+         else if (ShapeOfA == PhysicsShape.Type.Plane
+             && ShapeOfB == PhysicsShape.Type.halfspace)
+         { return false; }
+         else if (ShapeOfA == PhysicsShape.Type.halfspace
+             && ShapeOfB == PhysicsShape.Type.Plane)
+         { return false; }
+         else if (ShapeOfA == PhysicsShape.Type.Plane
+             && ShapeOfB == PhysicsShape.Type.Plane)
+         { return false; }
+         else
+         {
+             throw new System.Exception("UnKnow Shape Type!"); // throwing an exception to know if we did not implement the new shape's collision
+         }
+    
     }
 
     private void CheckCollisions()

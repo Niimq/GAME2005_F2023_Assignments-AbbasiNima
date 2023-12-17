@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5342963569940344677}
   - component: {fileID: 5342963569940344676}
   - component: {fileID: -5590701914269097730}
-  - component: {fileID: -4091584175772306675}
+  - component: {fileID: 1661982922232836987}
   m_Layer: 0
   m_Name: Sphere(bounce)
   m_TagString: Untagged
@@ -43,7 +43,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5342963569940344674}
-  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!23 &5342963569940344677
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -117,8 +117,8 @@ MonoBehaviour:
   frictionCoefficient: 0.1
   mass: 10
   massInverse: 1
-  shape: {fileID: -4091584175772306675}
---- !u!114 &-4091584175772306675
+  shape: {fileID: 0}
+--- !u!114 &1661982922232836987
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -127,8 +127,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 5342963569940344674}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 781ce1a32cfd3df478f3f80938f39673, type: 3}
+  m_Script: {fileID: 11500000, guid: 693fe14d2259eb445b737ad5a7dccd52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  radius: 0.5
-  bounciness: 1
+  centerpoint: {x: 0, y: 0, z: 0}
+  mMin: {x: 0, y: 0, z: 0}
+  mMax: {x: 0, y: 0, z: 0}
+  x: 0.5
+  y: 0.5
+  z: 0.5
