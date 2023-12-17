@@ -22,10 +22,6 @@ public abstract class PhysicsShape : MonoBehaviour
     }
 
     [SerializeField] private MaterialType materialType;  // Expose material type in the Unity Editor
-    public MaterialType GetMaterialType()
-    {
-        return materialType;
-    }
 
     // Getter and setter but can only be set in here
     public float Bounciness = 0.0f;
